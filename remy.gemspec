@@ -5,7 +5,7 @@ require "remy/version"
 Gem::Specification.new do |s|
   s.name        = "remy"
   s.version     = Remy::VERSION
-  s.authors     = ["Brian Butz & Justin Richard"]
+  s.authors     = ["Greg Woodward & Ryan Dy"]
   s.email       = ["pivotal-sharepost-dev@googlegroups.com"]
   s.homepage    = ""
   s.summary     = %q{TODO: Write a gem summary}
@@ -19,6 +19,8 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   # specify any dependencies here; for example:
-  # s.add_development_dependency "rspec"
+  s.add_development_dependency "rspec", "~> 2.7.0"
+  s.add_development_dependency "mocha"
+  s.add_development_dependency "bourne"
   # s.add_runtime_dependency "rest-client"
 end
