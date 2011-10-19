@@ -1,5 +1,5 @@
 module Remy
-  class Emile
+  class BootstrapChef
     attr_reader :ip_address, :ruby_version, :password, :quiet
 
     def initialize(options = { })
@@ -11,6 +11,7 @@ module Remy
 
     def bootstrap
       ssh_copy_id
+      update_linux_distribution
       rvm_install
       install_minimal_gems_to_bootstrap_chef
     end
@@ -76,6 +77,10 @@ module Remy
     def remote_execute(cmd)
       raise ArgumentError.new unless ip_address
       execute "ssh #{user}@#{ip_address} '#{cmd.strip}'"
+    end
+
+    def update_linux_distribution
+      remote_execute 'apt-get update && yes | apt-get upgrade'
     end
   end
 end
