@@ -19,8 +19,11 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   # specify any dependencies here; for example:
-  s.add_development_dependency 'rspec', '~> 2.7.0'
-  s.add_development_dependency 'mocha'
   s.add_development_dependency 'bourne'
+  s.add_development_dependency 'mocha'
+  s.add_development_dependency 'i18n'
+  s.add_development_dependency 'rspec', '~> 2.7.0'
+  s.add_runtime_dependency 'activesupport', '>= 2'
   s.add_runtime_dependency 'fog'
+  s.add_runtime_dependency 'mash'
 end

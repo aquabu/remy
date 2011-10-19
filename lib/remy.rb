@@ -1,5 +1,7 @@
-require 'remy/version'
-Dir['remy', '**', '*.rb'].each {|f| require f }
+require 'active_support/core_ext/class/attribute_accessors'
+require 'mash'
+
+Dir[File.join(File.dirname(__FILE__), 'remy', '**', '*.rb')].each { |f| require f }
 
 module Remy
   begin
