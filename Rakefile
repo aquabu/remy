@@ -9,9 +9,11 @@ end
 task :default => :spec
 
 
-namespace :emile do
-  desc 'Build emile'
-  task :build do
-    Emile.new.run
+namespace :remy do
+  namespace :chef do
+    desc 'bootstrap chef'
+    task :bootstrap, :ip_address, :password do |task, options|
+      Remy::Emile.new(options).bootstrap
+    end
   end
 end
