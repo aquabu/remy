@@ -39,6 +39,7 @@ module Remy
     def install_minimal_gems_to_bootstrap_chef
       remote_gem 'bundler'
       remote_gem 'chef'
+      remote_gem 'rspec'
     end
 
     def rvm_install
