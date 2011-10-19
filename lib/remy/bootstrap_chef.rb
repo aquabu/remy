@@ -1,10 +1,10 @@
 module Remy
   class BootstrapChef
-    attr_reader :ip_address, :ruby_version, :password, :quiet
+    attr_reader :public_ip, :ruby_version, :password
 
     def initialize(options = { })
       @ruby_version = options[:ruby_version] || '1.8.7'
-      @ip_address = options[:ip_address]
+      @public_ip = options[:public_ip]
       @password = options[:password]
       @quiet = options[:quiet] || false
     end
@@ -28,7 +28,7 @@ module Remy
 
     def execute(command)
       puts "command: #{command}"
-      if quiet
+      if quiet?
         `#{command} 2>&1`
         $?.success?
       else
@@ -54,12 +54,16 @@ module Remy
     end
 
     def ssh_copy_id
-      is_ssh_key_in_local_known_hosts_file = `grep "#{ip_address}" ~/.ssh/known_hosts`.length > 0
+      is_ssh_key_in_local_known_hosts_file = `grep "#{public_ip}" ~/.ssh/known_hosts`.length > 0
       if is_ssh_key_in_local_known_hosts_file
-        execute %Q{expect -c 'spawn ssh-copy-id #{user}@#{ip_address}; expect assword ; send "#{password}\\n" ; interact'}
+        execute %Q{expect -c 'spawn ssh-copy-id #{user}@#{public_ip}; expect assword ; send "#{password}\\n" ; interact'}
       else
-        execute %Q{expect -c 'spawn ssh-copy-id #{user}@#{ip_address}; expect continue; send "yes\\n"; expect assword ; send "#{password}\\n" ; interact'}
+        execute %Q{expect -c 'spawn ssh-copy-id #{user}@#{public_ip}; expect continue; send "yes\\n"; expect assword ; send "#{password}\\n" ; interact'}
       end
+    end
+
+    def quiet?
+      @quiet
     end
 
     def remote_gem(gem_name, options={ })
@@ -76,8 +80,8 @@ module Remy
     end
 
     def remote_execute(cmd)
-      raise ArgumentError.new unless ip_address
-      execute "ssh #{user}@#{ip_address} '#{cmd.strip}'"
+      raise ArgumentError.new unless public_ip
+      execute "ssh #{user}@#{public_ip} '#{cmd.strip}'"
     end
 
     def update_linux_distribution
