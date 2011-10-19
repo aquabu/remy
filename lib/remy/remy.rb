@@ -4,18 +4,22 @@ module Remy
   end
 
   class << self
-    def configuration
-      @configuration
-    end
-
-    def configure(&block)
+    def configure
       @config_instance = Configuration.new
-      block.call(@config_instance)
+      yield @config_instance
       @configuration = Mash.new(:yml_files => @config_instance.yml_files)
 
       @config_instance.yml_files.each do |filename|
         configuration.deep_merge!(YAML::load(IO.read(filename)))
       end
+    end
+
+    def configuration
+      @configuration
+    end
+
+    def to_json
+      configuration.to_json
     end
   end
 end

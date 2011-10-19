@@ -18,14 +18,22 @@ describe Remy do
   before do
     IO.expects(:read).with('foo.yml').returns(foo_yml)
     IO.expects(:read).with('bar.yml').returns(bar_yml)
-  end
-
-  it 'should combine multiple yaml files into a mash' do
     Remy.configure do |config|
       config.yml_files = ['foo.yml', 'bar.yml']
     end
-    Remy.configuration.yml_files.should == ['foo.yml', 'bar.yml']
-    Remy.configuration.blah.should == 'bar'
-    Remy.configuration.baz.should == 'baz'
+  end
+
+  describe '.configuration' do
+    it 'should combine multiple yaml files into a mash' do
+      subject.configuration.yml_files.should == ['foo.yml', 'bar.yml']
+      subject.configuration.blah.should == 'bar'
+      subject.configuration.baz.should == 'baz'
+    end
+  end
+
+  describe '.to_json' do
+    it 'should create the expected JSON' do
+      JSON.parse(subject.to_json).should == {"yml_files"=>["foo.yml", "bar.yml"], "baz"=>"baz", "blah"=>"bar"}
+    end
   end
 end

@@ -1,4 +1,4 @@
-require 'active_support/core_ext/class/attribute_accessors'
+require 'active_support/core_ext/object/to_json'
 require 'mash'
 
 Dir[File.join(File.dirname(__FILE__), 'remy', '**', '*.rb')].each { |f| require f }
