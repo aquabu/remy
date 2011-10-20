@@ -25,7 +25,7 @@ describe Remy do
   describe '.run_chef_remote' do
     it 'should work' do
       #Remy.expects(:execute).with("ssh root@111.111.111.111 'chef_solo'")
-      Remy.run_chef_remote('111.111.111.111')
+      Remy.run_chef_remote('50.57.159.107')
     end
   end
 end

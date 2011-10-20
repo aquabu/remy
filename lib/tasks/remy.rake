@@ -6,6 +6,11 @@ namespace :remy do
     task :bootstrap, :public_ip, :password do |task, options|
       Remy::BootstrapChef.new(options).bootstrap
     end
+
+    desc 'run chef solo'
+    task :run, :public_ip do |task, options|
+      Remy::run_chef_remote(options)
+    end
   end
   namespace :server do
     desc 'create a server'

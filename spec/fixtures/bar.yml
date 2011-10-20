@@ -1,2 +1,5 @@
 baz:
   baz
+run_list:
+  - recipe[hello_world::default]
+

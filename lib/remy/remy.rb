@@ -10,7 +10,7 @@ module Remy
     def configure
       @config_instance = Configuration.new
       yield @config_instance
-      @configuration = Mash.new(:yml_files => @config_instance.yml_files, :cookbook_path => @config_instance.cookbook_path.map {|p| File.expand_path(p) })
+      @configuration = Mash.new(:yml_files => @config_instance.yml_files, :cookbook_path => @config_instance.cookbook_path)
 
       @config_instance.yml_files.each do |filename|
         configuration.deep_merge!(YAML::load(IO.read(filename)))
@@ -24,10 +24,11 @@ module Remy
     def tar
       olddir = pwd
       begin
+        full_cookbook_path = configuration.cookbook_path.map{|p| File.expand_path(p) }
         tmpdir = Dir.mktmpdir
         chdir tmpdir
         mkdir 'chef'
-        configuration.cookbook_path.each do |cookbook_path|
+        full_cookbook_path.each do |cookbook_path|
           cp_r cookbook_path, 'chef'
         end
         solo_rb = <<-EOF
@@ -49,12 +50,10 @@ EOF
     def run_chef_remote(public_ip)
       @public_ip = public_ip
       tar
-
-      # create a tarball from cookbook directories and node.json
-      # scp tarball to remote
-      # untar the tarball remotely
-      #remote_execute 'chef_solo'
-      # rm -rf the tarball directory?
+      remote_execute "rm -rf /var/chef /var/chef.tar.gz"
+      `scp /tmp/chef.tar.gz #{user}@#{public_ip}:/var`
+      remote_execute "cd /var; tar xvzf chef.tar.gz"
+      #remote_execute "cd /var/chef ; rvm use 1.8.7 ; chef-solo -j node.json -c solo.rb"
     end
 
     def public_ip

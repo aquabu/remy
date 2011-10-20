@@ -20,7 +20,7 @@ module Remy
     end
 
     def quiet?
-      true
+      false
     end
   end
 end
