@@ -1,5 +1,4 @@
-require 'remy/bootstrap_chef'
-require 'remy/server'
+require 'remy'
 
 namespace :remy do
   namespace :chef do
@@ -19,7 +18,7 @@ namespace :remy do
       begin
         result = Remy::Server.new({:raise_exception => true}.merge(options)).create
         Rake::Task[:'remy:chef:bootstrap'].invoke(result)
-      rescue
+      rescue Exception => e
       end
     end
   end

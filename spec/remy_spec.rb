@@ -1,31 +1,16 @@
 require 'spec_helper'
 
 describe Remy do
-  let(:foo_yml) do
-    <<-YAML
-    blah:
-      bar
-    YAML
-  end
-
-  let(:bar_yml) do
-    <<-YAML
-    baz:
-      baz
-    YAML
-  end
-
   before do
-    IO.expects(:read).with('foo.yml').returns(foo_yml)
-    IO.expects(:read).with('bar.yml').returns(bar_yml)
     Remy.configure do |config|
-      config.yml_files = ['foo.yml', 'bar.yml']
+      config.yml_files = ['fixtures/foo.yml', 'fixtures/bar.yml']
+      config.cookbook_path = ["cookbooks"]
     end
   end
 
   describe '.configuration' do
     it 'should combine multiple yaml files into a mash' do
-      subject.configuration.yml_files.should == ['foo.yml', 'bar.yml']
+      subject.configuration.yml_files.should == ['fixtures/foo.yml', 'fixtures/bar.yml']
       subject.configuration.blah.should == 'bar'
       subject.configuration.baz.should == 'baz'
     end
@@ -33,7 +18,14 @@ describe Remy do
 
   describe '.to_json' do
     it 'should create the expected JSON' do
-      JSON.parse(subject.to_json).should == {"yml_files"=>["foo.yml", "bar.yml"], "baz"=>"baz", "blah"=>"bar"}
+      JSON.parse(subject.to_json).should == {"yml_files"=>["fixtures/foo.yml", "fixtures/bar.yml"], "baz"=>"baz", "blah"=>"bar"}
+    end
+  end
+
+  describe '.run_chef_remote' do
+    it 'should work' do
+      #Remy.expects(:execute).with("ssh root@111.111.111.111 'chef_solo'")
+      Remy.run_chef_remote('111.111.111.111')
     end
   end
 end

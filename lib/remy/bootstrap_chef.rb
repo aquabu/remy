@@ -1,5 +1,7 @@
 module Remy
   class BootstrapChef
+    include ::Remy::Shell
+
     attr_reader :public_ip, :ruby_version, :password
 
     def initialize(options = { })
@@ -16,24 +18,10 @@ module Remy
       install_minimal_gems_to_bootstrap_chef
     end
 
-    def user
-      'root'
-    end
-
     private
     def apt_get_rvm_packages
       # This list of required packages came from doing "rvm requirements"
       remote_apt_get 'build-essential openssl libreadline6 libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison'
-    end
-
-    def execute(command)
-      puts "command: #{command}"
-      if quiet?
-        `#{command} 2>&1`
-        $?.success?
-      else
-        system command
-      end
     end
 
     def install_minimal_gems_to_bootstrap_chef
@@ -77,11 +65,6 @@ module Remy
 
     def remote_apt_get(package_name)
       remote_execute "apt-get install -y #{package_name}"
-    end
-
-    def remote_execute(cmd)
-      raise ArgumentError.new unless public_ip
-      execute "ssh #{user}@#{public_ip} '#{cmd.strip}'"
     end
 
     def update_linux_distribution
