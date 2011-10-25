@@ -24,16 +24,17 @@ class Remy::Server
       :rackspace_api_key => key,
       :rackspace_username => username
     )
-    @server = compute.servers.create(:flavor_id => flavor_id, :image_id => image_id, :name => name)
+    @server = compute.servers.create(:flavor_id => flavor_id.to_i, :image_id => image_id.to_i, :name => name)
     server.wait_for do
       print '.'
       STDOUT.flush
       ready?
     end
     print server_info
-    {:public_ip => server.public_ip, :password => server.password}
+    {:public_ip => server.public_ip_address, :password => server.password}
   rescue Exception => e
     puts 'Failed!'
+    p e
     raise e if raise_exception?
     {}
   end
@@ -42,12 +43,12 @@ class Remy::Server
   def server_info
     <<-SERVER_INFO
 
-Server name:    #{server.name}"
-Admin password: #{server.password}"
-Public IP:      #{server.public_ip_address}"
-Private IP:     #{server.private_ip_address}"
-RAM:            #{server.flavor}"
-Image:          #{server.image}"
+Server name:    #{server.name}
+Admin password: #{server.password}
+Public IP:      #{server.public_ip_address}
+Private IP:     #{server.private_ip_address}
+RAM:            #{server.flavor.ram} MB
+Image:          #{server.image.name}
 SERVER_INFO
   end
 
