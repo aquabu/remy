@@ -1,9 +1,10 @@
 module Remy
   class Configuration
-    attr_accessor :yml_files, :cookbook_path, :remote_location_of_chef_dir
+    attr_accessor :yml_files, :cookbook_path, :remote_chef_dir, :node_attributes
 
     def initialize
       @yml_files = []
+      @node_attributes = {}
     end
   end
 
@@ -14,9 +15,9 @@ module Remy
     def configure
       @config_instance = Configuration.new
       yield @config_instance
-      @configuration = Mash.new(:yml_files => [@config_instance.yml_files].flatten,
-                                :remote_location_of_chef_dir => (@config_instance.remote_location_of_chef_dir || '/var'),
-                                :cookbook_path => [@config_instance.cookbook_path].flatten)
+      @configuration = Mash.new({:yml_files => [@config_instance.yml_files].flatten,
+                                :remote_chef_dir => (@config_instance.remote_chef_dir || '/var/chef'),
+                                :cookbook_path => [@config_instance.cookbook_path].flatten}.merge!(@config_instance.node_attributes))
 
       @config_instance.yml_files.each do |filename|
         configuration.deep_merge!(YAML::load(IO.read(filename)))

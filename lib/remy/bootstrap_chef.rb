@@ -12,10 +12,10 @@ module Remy
     end
 
     def bootstrap
-      ssh_copy_id
+      copy_ssh_key_to_remote
       update_linux_distribution
-      rvm_install
-      install_minimal_gems_to_bootstrap_chef
+      install_rvm
+      install_gems_to_bootstrap_chef
     end
 
     private
@@ -24,13 +24,13 @@ module Remy
       remote_apt_get 'build-essential openssl libreadline6 libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison'
     end
 
-    def install_minimal_gems_to_bootstrap_chef
+    def install_gems_to_bootstrap_chef
       remote_gem 'bundler'
       remote_gem 'chef'
       remote_gem 'rspec'
     end
 
-    def rvm_install
+    def install_rvm
       remote_execute rvm_multi_user_install
       apt_get_rvm_packages
       remote_execute "/usr/local/rvm/bin/rvm install #{ruby_version}"
@@ -41,7 +41,7 @@ module Remy
       'curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer -o rvm-installer ; chmod +x rvm-installer ; sudo -s ./rvm-installer --version latest'
     end
 
-    def ssh_copy_id
+    def copy_ssh_key_to_remote
       is_ssh_key_in_local_known_hosts_file = `grep "#{public_ip}" ~/.ssh/known_hosts`.length > 0
       if is_ssh_key_in_local_known_hosts_file
         execute %Q{expect -c 'spawn ssh-copy-id #{user}@#{public_ip}; expect assword ; send "#{password}\\n" ; interact'}
