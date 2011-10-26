@@ -9,22 +9,23 @@ describe Remy::LittleChef do
   end
 
   describe "#configuration" do
+    let(:little_chef) { Remy::LittleChef.new(:remote_chef_ip => '50.57.162.227') }
+    subject { little_chef.configuration }
     it "should extract the info which pertains to this " do
-      little_chef = Remy::LittleChef.new(:remote_chef_ip => '50.57.162.227')
-      configuration = little_chef.configuration
-      configuration.remote_chef_ip.should == '50.57.162.227'
-      configuration.rails_env.should == demo
-      configuration.database_ip.should == '10.1.2.3'
+      subject.remote_chef_ip.should == '50.57.162.227'
+      subject.rails_env.should == 'demo'
+      subject.color.should == 'blue'
+      subject.recipes.should == ['recipe[hello_world]']
     end
   end
 
   describe '#run' do
     it 'should work with a hash' do
       #Remy.expects(:execute).with("ssh root@111.111.111.111 'chef_solo'")
-      little_chef = Remy::LittleChef.new(:remote_chef_ip => '50.57.162.227', :run_list => ['recipe[hello_world::default]'])
+      little_chef = Remy::LittleChef.new(:remote_chef_ip => '50.57.162.227') #, :run_list => ['recipe[hello_world::default]'])
       little_chef.run
       little_chef.configuration.remote_chef_ip.should == '50.57.162.227'
-      little_chef.configuration.run_list.should == ['recipe[hello_world::default]']
+      little_chef.configuration.recipes.should == ['recipe[hello_world]']
     end
 
     it 'should work with JSON' do
@@ -32,7 +33,7 @@ describe Remy::LittleChef do
       little_chef = Remy::LittleChef.new("{\"remote_chef_ip\":\"50.57.162.227\",\"run_list\":[\"recipe[hello_world::default]\"]}")
       little_chef.run
       little_chef.configuration.remote_chef_ip.should == '50.57.162.227'
-      little_chef.configuration.run_list.should == ['recipe[hello_world::default]']
+      little_chef.configuration.recipes.should == ['recipe[hello_world]']
     end
 
     it 'should not modify the global Remy config, but rather only the config for this Chef run which is used to generate the JSON' do

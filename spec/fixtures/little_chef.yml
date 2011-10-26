@@ -1,1 +1,29 @@
+app_server: &APP
+  recipes:
+    - recipe[hello_world]
+database_server: &DB
+  adapter: mysql2
+  encoding: utf8
+
+servers:
+  web.sharespost.com:
+    <<: *APP
+    remote_chef_ip: 50.57.162.227
+    rails_env: demo
+    color: blue
+
+  db.sharespost.com:
+    <<: *DB
+    remote_chef_ip: 51.51.51.51
+    rails_env: production
+    color: yellow
+
+  demo.sharespost.com:
+    <<: *DB
+    <<: *APP
+    remote_chef_ip: 52.52.52.52
+    rails_env: demo
+    color: green
+
+
 

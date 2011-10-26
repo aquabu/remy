@@ -8,8 +8,9 @@ module Remy
       options = JSON.parse(options).symbolize_keys! if options.is_a?(String)
       @remote_chef_ip = options[:remote_chef_ip]
       @chef_args = options.delete(:chef_args)
-      @configuration = Remy.configuration.dup
-      @configuration.deep_merge!(options)
+      @configuration = Mash.new(Remy.configuration.to_hash.deep_merge(options))
+      server_name, server_config = @configuration.servers.detect {|(server_name, server_config)| server_config.remote_chef_ip == remote_chef_ip}
+      @configuration.merge!(server_config)
     end
 
     def run
