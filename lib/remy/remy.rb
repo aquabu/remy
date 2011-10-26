@@ -15,10 +15,10 @@ module Remy
     def configure
       @config_instance = Configuration.new
       yield @config_instance
-      @configuration = Mash.new({:yml_files => [@config_instance.yml_files].flatten,
+      @configuration = Mash.new({:yml_files => [@config_instance.yml_files].compact.flatten,
                                 :remote_chef_dir => (@config_instance.remote_chef_dir || '/var/chef'),
-                                :roles_path => [@config_instance.roles_path].flatten,
-                                :cookbook_path => [@config_instance.cookbook_path].flatten}.merge!(@config_instance.node_attributes))
+                                :roles_path => [@config_instance.roles_path].compact.flatten,
+                                :cookbook_path => [@config_instance.cookbook_path].compact.flatten}.merge!(@config_instance.node_attributes))
 
       @config_instance.yml_files.each do |filename|
         configuration.deep_merge!(YAML::load(IO.read(filename)))

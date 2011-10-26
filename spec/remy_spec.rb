@@ -9,17 +9,27 @@ describe Remy do
         subject.configuration.blah.should == 'bar'
         subject.configuration.baz.should == 'baz'
       end
+
+      it 'should return an empty array if there are no yml files' do
+        Remy.configure {  }
+        subject.configuration.yml_files.should == []
+      end
     end
 
     describe "cookbooks path" do
-      it "should work if a single file is specified" do
+      it "should work if a single cookbook path is specified" do
         Remy.configure { |config| config.cookbook_path = 'cookbooks' }
         subject.configuration.cookbook_path.should == ['cookbooks']
       end
 
-      it "should work if multiple files are specified" do
+      it "should work if multiple cookbook paths are specified" do
         Remy.configure { |config| config.cookbook_path = ['cookbooks1', 'cookbooks2'] }
         subject.configuration.cookbook_path.should == ['cookbooks1', 'cookbooks2']
+      end
+
+      it "should return an empty array if no cookbook paths are specified" do
+        Remy.configure { }
+        subject.configuration.cookbook_path.should == []
       end
     end
 
@@ -33,12 +43,21 @@ describe Remy do
         Remy.configure { |config| config.roles_path = ['roles1', 'roles2'] }
         subject.configuration.roles_path.should == ['roles1', 'roles2']
       end
+
+      it "should return an empty array if no roles paths are specified" do
+        Remy.configure {} 
+        subject.configuration.roles_path.should == []
+      end
     end
 
     describe "node attributes" do
       it "should merge in the other node attributes from the hash" do
         Remy.configure { |config| config.node_attributes = {:another_node_attribute => 'red'} }
         subject.configuration.another_node_attribute.should == 'red'
+      end
+
+      it "should not blow up if there no node attributes are specified" do
+        lambda { Remy.configure {  } }.should_not raise_error
        end
     end
 
@@ -56,7 +75,13 @@ describe Remy do
 
   describe '.to_json' do
     it 'should create the expected JSON' do
-      JSON.parse(subject.to_json).should == {"cookbook_path"=>["cookbooks"], "remote_chef_dir"=>"/var/chef", "baz"=>"baz", "yml_files"=>["fixtures/foo.yml", "fixtures/bar.yml"], "blah"=>"bar"}
+      Remy.configure do |config|
+        config.remote_chef_dir = 'foo'
+        config.cookbook_path = 'bar'
+        config.roles_path = 'blech'
+        config.yml_files = ['fixtures/foo.yml', 'fixtures/bar.yml']
+      end
+      JSON.parse(subject.to_json).should == {"cookbook_path"=>["bar"], "remote_chef_dir"=>"foo", "roles_path"=>["blech"], "baz"=>"baz", "yml_files"=>["fixtures/foo.yml", "fixtures/bar.yml"], "blah"=>"bar"}
     end
   end
 
