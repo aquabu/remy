@@ -4,17 +4,16 @@ module Remy
     include ::Remy::Shell
     include FileUtils
 
-    def initialize(options = {})
+    def initialize(options)
       options = JSON.parse(options).symbolize_keys! if options.is_a?(String)
       @remote_chef_ip = options[:remote_chef_ip]
       @chef_args = options.delete(:chef_args)
       @quiet = options.delete(:quiet)
       @configuration = Mash.new(Remy.configuration.to_hash.deep_merge(options))
-      raise ArgumentError unless @configuration.has_key? :remote_chef_ip
       server_name, server_config = @configuration.servers.detect {|(server_name, server_config)| server_config.remote_chef_ip == remote_chef_ip}
       @configuration.merge!(server_config)
     end
-e
+
     def run
       create_temp_dir_which_contains_cookbooks_roles_and_scripts
       rsync_temp_dir_with_cookbooks_to_remote_host
