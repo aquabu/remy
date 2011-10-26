@@ -33,6 +33,23 @@ describe Remy do
       end
     end
 
+    describe "specs path" do
+      it "should work if a single spec path is specified" do
+        Remy.configure { |config| config.spec_path = 'specs' }
+        subject.configuration.spec_path.should == ['specs']
+      end
+
+      it "should work if multiple spec paths are specified" do
+        Remy.configure { |config| config.spec_path = ['specs1', 'specs2'] }
+        subject.configuration.spec_path.should == ['specs1', 'specs2']
+      end
+
+      it "should return an empty array if no spec paths are specified" do
+        Remy.configure { }
+        subject.configuration.spec_path.should == []
+      end
+    end
+
     describe "roles path" do
       it "should work if a single file is specified" do
         Remy.configure { |config| config.roles_path = 'roles' }

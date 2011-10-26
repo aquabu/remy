@@ -4,7 +4,8 @@ describe Remy::LittleChef do
   before do
     Remy.configure do |config|
       config.yml_files = ['../fixtures/foo.yml', '../fixtures/bar.yml', '../fixtures/little_chef.yml']
-      config.cookbook_path = ["../cookbooks"]
+      config.cookbook_path = ["../chef/cookbooks"]
+      config.spec_path = ["../chef/spec"]
     end
   end
 
