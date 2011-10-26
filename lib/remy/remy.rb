@@ -33,5 +33,17 @@ module Remy
     def to_json
       configuration.to_json
     end
+
+    def servers
+      configuration.servers
+    end
+
+    def find_servers(options = {})
+      Mash.new(configuration.servers.inject({}) do |hash, (server_name, server_config)|
+        found = options.all? { |(key, value)| server_config[key] == value }
+        hash[server_name] = server_config if found
+        hash
+      end)
+    end
   end
 end

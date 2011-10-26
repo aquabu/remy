@@ -98,7 +98,34 @@ describe Remy do
         config.roles_path = 'blech'
         config.yml_files = ['fixtures/foo.yml', 'fixtures/bar.yml']
       end
-      JSON.parse(subject.to_json).should == {"cookbook_path"=>["bar"], "remote_chef_dir"=>"foo", "roles_path"=>["blech"], "baz"=>"baz", "yml_files"=>["fixtures/foo.yml", "fixtures/bar.yml"], "blah"=>"bar"}
+      JSON.parse(subject.to_json).should == {"cookbook_path"=>["bar"], "roles_path"=>["blech"], "spec_path"=>[], "remote_chef_dir"=>"foo", "baz"=>"baz", "yml_files"=>["fixtures/foo.yml", "fixtures/bar.yml"], "blah"=>"bar"}
+    end
+  end
+
+  describe '.servers' do
+    before do
+      Remy.configure do |config|
+        config.yml_files = ['fixtures/little_chef.yml']
+      end
+    end
+
+    it 'returns all servers' do
+      Remy.servers.size.should == 3
+      Remy.servers['db.sharespost.com'].color.should == 'yellow'
+    end
+
+    describe 'find' do
+      it 'should return servers that match the criteria (using standard Enumerable methods)' do
+        Remy.servers.select {|(k,v)| v.rails_env == 'demo' }.map(&:first).should == ['web.sharespost.com', 'demo.sharespost.com']
+      end
+
+      it 'should return servers that match the criteria' do
+        Remy.find_servers(:rails_env => 'demo').keys.should == ['web.sharespost.com', 'demo.sharespost.com']
+      end
+
+      it 'should return servers that match the criteria (with multiple criteria)' do
+        Remy.find_servers(:rails_env => 'demo', :color => 'blue').keys.should == ['web.sharespost.com']
+      end
     end
   end
 end
