@@ -1,24 +1,45 @@
 require 'spec_helper'
 
 describe Remy do
-  before do
-    Remy.configure do |config|
-      config.yml_files = ['fixtures/foo.yml', 'fixtures/bar.yml']
-      config.cookbook_path = ["cookbooks"]
-      config.roles_path = ["roles"]
-      config.node_attributes = {:another_node_attribute => 'red'}
-    end
-  end
-
   describe '.configuration' do
-    it 'should combine multiple yaml files into a mash' do
-      subject.configuration.yml_files.should == ['fixtures/foo.yml', 'fixtures/bar.yml']
-      subject.configuration.blah.should == 'bar'
-      subject.configuration.baz.should == 'baz'
+    describe "yml files" do
+      it 'should combine multiple yaml files into a mash' do
+        Remy.configure { |config| config.yml_files = ['fixtures/foo.yml', 'fixtures/bar.yml'] }
+        subject.configuration.yml_files.should == ['fixtures/foo.yml', 'fixtures/bar.yml']
+        subject.configuration.blah.should == 'bar'
+        subject.configuration.baz.should == 'baz'
+      end
     end
 
-    it "should merge in the other node attributes from the hash" do
-      subject.configuration.another_node_attribute.should == 'red'
+    describe "cookbooks path" do
+      it "should work if a single file is specified" do
+        Remy.configure { |config| config.cookbook_path = 'cookbooks' }
+        subject.configuration.cookbook_path.should == ['cookbooks']
+      end
+
+      it "should work if multiple files are specified" do
+        Remy.configure { |config| config.cookbook_path = ['cookbooks1', 'cookbooks2'] }
+        subject.configuration.cookbook_path.should == ['cookbooks1', 'cookbooks2']
+      end
+    end
+
+    describe "roles path" do
+      it "should work if a single file is specified" do
+        Remy.configure { |config| config.roles_path = 'roles' }
+        subject.configuration.roles_path.should == ['roles']
+      end
+
+      it "should work if multiple files are specified" do
+        Remy.configure { |config| config.roles_path = ['roles1', 'roles2'] }
+        subject.configuration.roles_path.should == ['roles1', 'roles2']
+      end
+    end
+
+    describe "node attributes" do
+      it "should merge in the other node attributes from the hash" do
+        Remy.configure { |config| config.node_attributes = {:another_node_attribute => 'red'} }
+        subject.configuration.another_node_attribute.should == 'red'
+       end
     end
 
     describe "#remote_chef_dir" do
@@ -27,9 +48,7 @@ describe Remy do
       end
 
       it "should be able to be overriden" do
-        Remy.configure do |config|
-          config.remote_chef_dir = '/foo/shef'
-        end
+        Remy.configure { |config| config.remote_chef_dir = '/foo/shef' }
         subject.configuration.remote_chef_dir.should == '/foo/shef'
       end
     end
