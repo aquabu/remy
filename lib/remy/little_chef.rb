@@ -8,6 +8,7 @@ module Remy
       options = JSON.parse(options).symbolize_keys! if options.is_a?(String)
       @remote_chef_ip = options[:remote_chef_ip]
       @chef_args = options.delete(:chef_args)
+      @quiet = options.delete(:quiet)
       @configuration = Mash.new(Remy.configuration.to_hash.deep_merge(options))
       server_name, server_config = @configuration.servers.detect {|(server_name, server_config)| server_config.remote_chef_ip == remote_chef_ip}
       @configuration.merge!(server_config)
@@ -52,7 +53,7 @@ module Remy
     end
 
     def run_chef_solo_on_remote_host
-      `ssh -t #{user}@#{remote_chef_ip} bash --login -c '#{remote_chef_dir}/#{run_chef_solo_bash_script}'`
+      remote_execute "bash --login -c #{remote_chef_dir}/#{run_chef_solo_bash_script}"
     end
 
     def create_temp_dir
@@ -134,6 +135,10 @@ EOF
 
     def run_chef_solo_bash_script
       'run_chef_solo'
+    end
+
+    def quiet?
+      @quiet
     end
   end
 end
