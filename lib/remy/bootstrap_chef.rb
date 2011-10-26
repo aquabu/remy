@@ -74,7 +74,7 @@ module Remy
     end
 
     def update_linux_distribution
-      remote_execute 'apt-get update && apt-get --yes upgrade'
+      remote_execute 'apt-get update && yes | apt-get upgrade'
     end
   end
 end

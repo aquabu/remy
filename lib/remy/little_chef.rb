@@ -4,10 +4,9 @@ module Remy
     include ::Remy::Shell
     include FileUtils
 
-    def initialize(options = {})
+    def initialize(options)
       options = JSON.parse(options).symbolize_keys! if options.is_a?(String)
-      @public_ip = options[:public_ip]
-      @chef_args = options.delete(:chef_args)
+      @remote_chef_ip = options[:remote_chef_ip]
       @configuration = Remy.configuration.dup
       @configuration.deep_merge!(options)
     end
@@ -38,14 +37,14 @@ module Remy
       olddir = pwd
       begin
         chdir(tmp_dir)
-        `rsync -av * #{user}@#{public_ip}:#{remote_chef_dir}`
+        `rsync -av * #{user}@#{remote_chef_ip}:#{remote_chef_dir}`
       ensure
         chdir(olddir)
       end
     end
 
     def run_chef_solo_on_remote_host
-      `ssh -t #{user}@#{public_ip} bash --login -c '#{remote_chef_dir}/#{run_chef_solo_bash_script}'`
+      `ssh -t #{user}@#{remote_chef_ip} bash --login -c '#{remote_chef_dir}/#{run_chef_solo_bash_script}'`
     end
 
     def create_temp_dir
@@ -81,10 +80,7 @@ EOF
     def create_bash_script_which_runs_chef
       run_chef = <<-EOF
 #!/bin/bash
-# Give "-l debug" to this script to get debug output from Chef
-
-#  $@ gets the array of Bash arguments to pass along to Chef:
-chef-solo $@ #{@chef_args} -j #{remote_chef_dir}/#{node_json} -c #{remote_chef_dir}/#{solo_rb}
+chef-solo -j #{remote_chef_dir}/#{node_json} -c #{remote_chef_dir}/#{solo_rb}
 EOF
       File.open(File.join(tmp_dir, run_chef_solo_bash_script), 'w+') do |f|
         f.write(run_chef)
@@ -98,8 +94,8 @@ EOF
       end
     end
 
-    def public_ip
-      @public_ip
+    def remote_chef_ip
+      @remote_chef_ip
     end
 
     def node_json
