@@ -11,7 +11,7 @@ module Remy
     end
 
     def run
-      create_temp_dir_which_contains_cookbooks_and_scripts
+      create_temp_dir_which_contains_cookbooks_roles_and_scripts
       rsync_temp_dir_with_cookbooks_to_remote_host
       run_chef_solo_on_remote_host
     end
@@ -22,8 +22,10 @@ module Remy
 
     private
 
-    def create_temp_dir_which_contains_cookbooks_and_scripts
-      create_temp_dir_and_copy_cookbook_dirs
+    def create_temp_dir_which_contains_cookbooks_roles_and_scripts
+      create_temp_dir
+      copy_cookbook_dirs_to_tmp_dir
+      copy_role_dirs_to_tmp_dir
       create_solo_rb
       create_bash_script_which_runs_chef
       create_node_json_from_remy_config
@@ -44,11 +46,21 @@ module Remy
       `ssh -t #{user}@#{public_ip} bash --login -c '#{remote_chef_dir}/#{run_chef_solo_bash_script}'`
     end
 
-    def create_temp_dir_and_copy_cookbook_dirs
-      full_cookbook_path = Remy.configuration.cookbook_path.map{|p| File.expand_path(p) }
+    def create_temp_dir
       @tmpdir = Dir.mktmpdir
+    end
+
+    def copy_cookbook_dirs_to_tmp_dir
+      full_cookbook_path = Remy.configuration.cookbook_path.map{|p| File.expand_path(p) }
       full_cookbook_path.each do |cookbook_path|
         cp_r cookbook_path, tmp_dir
+      end
+    end
+
+    def copy_role_dirs_to_tmp_dir
+      full_roles_path = Remy.configuration.roles_path.map{|p| File.expand_path(p) }
+      full_roles_path.each do |roles_path|
+        cp_r roles_path, tmp_dir
       end
     end
 
@@ -56,6 +68,7 @@ module Remy
       solo_rb_contents = <<-EOF
 file_cache_path "#{remote_chef_dir}"
 cookbook_path ["#{remote_chef_dir}/cookbooks"]
+role_path "#{remote_chef_dir}/roles"
 cache_options({ :path => "#{remote_chef_dir}/cache/checksums", :skip_expires => true })
 EOF
       File.open(File.join(tmp_dir, solo_rb), 'w+') do |f|

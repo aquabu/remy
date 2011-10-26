@@ -1,0 +1,9 @@
+{
+  "name": "test_role2",
+  "default_attributes": { },
+  "override_attributes": { },
+  "json_class": "Chef::Role",
+  "description": "A 2nd test role",
+  "chef_type": "role",
+  "run_list": [ "recipe[hello_world]" ]
+}
