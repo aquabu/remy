@@ -4,7 +4,7 @@ module Remy
     include ::Remy::Shell
     include FileUtils
 
-    def initialize(options)
+    def initialize(options = {})
       options = JSON.parse(options).symbolize_keys! if options.is_a?(String)
       @public_ip = options[:public_ip]
       @configuration = Remy.configuration.dup
