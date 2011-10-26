@@ -19,6 +19,7 @@ module Remy
     end
 
     private
+
     def apt_get_rvm_packages
       # This list of required packages came from doing "rvm requirements"
       remote_apt_get 'build-essential openssl libreadline6 libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-0 libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison'
@@ -41,7 +42,12 @@ module Remy
       'curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer -o rvm-installer ; chmod +x rvm-installer ; sudo -s ./rvm-installer --version latest'
     end
 
+    def is_ssh_copy_id_installed_locally?
+      `which ssh-copy-id`.length > 0
+    end
+
     def copy_ssh_key_to_remote
+      raise "ssh-copy-id is not installed locally! On the Mac, do 'brew install ssh-copy-id'" unless is_ssh_copy_id_installed_locally?
       is_ssh_key_in_local_known_hosts_file = `grep "#{public_ip}" ~/.ssh/known_hosts`.length > 0
       if is_ssh_key_in_local_known_hosts_file
         execute %Q{expect -c 'spawn ssh-copy-id #{user}@#{public_ip}; expect assword ; send "#{password}\\n" ; interact'}
