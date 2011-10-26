@@ -19,6 +19,12 @@ describe Remy::LittleChef do
       little_chef.configuration.run_list.should == ['recipe[hello_world::default]']
     end
 
+    it 'should be able to feed command-line arguments to Chef' do
+      #Remy.expects(:execute).with("ssh root@111.111.111.111 'chef_solo'")
+      little_chef = Remy::LittleChef.new(:public_ip => '50.57.150.171', :run_list => ['recipe[hello_world::default]'], :chef_args => "-l debug")
+      little_chef.run
+    end
+
     it 'should work with JSON' do
       #Remy.expects(:execute).with("ssh root@111.111.111.111 'chef_solo'")
       little_chef = Remy::LittleChef.new("{\"public_ip\":\"50.57.150.171\",\"run_list\":[\"recipe[hello_world::default]\"]}")

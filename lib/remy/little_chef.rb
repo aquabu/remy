@@ -7,6 +7,7 @@ module Remy
     def initialize(options = {})
       options = JSON.parse(options).symbolize_keys! if options.is_a?(String)
       @public_ip = options[:public_ip]
+      @chef_args = options.delete(:chef_args)
       @configuration = Remy.configuration.dup
       @configuration.deep_merge!(options)
     end
@@ -80,7 +81,10 @@ EOF
     def create_bash_script_which_runs_chef
       run_chef = <<-EOF
 #!/bin/bash
-chef-solo -j #{remote_chef_dir}/#{node_json} -c #{remote_chef_dir}/#{solo_rb}
+# Give "-l debug" to this script to get debug output from Chef
+
+#  $@ gets the array of Bash arguments to pass along to Chef:
+chef-solo $@ #{@chef_args} -j #{remote_chef_dir}/#{node_json} -c #{remote_chef_dir}/#{solo_rb}
 EOF
       File.open(File.join(tmp_dir, run_chef_solo_bash_script), 'w+') do |f|
         f.write(run_chef)
