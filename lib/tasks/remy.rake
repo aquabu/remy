@@ -9,9 +9,10 @@ namespace :remy do
 
     desc 'run chef solo'
     task :run, :public_ip do |task, options|
-      Remy::run_chef_remote(options)
+      Remy::LittleChef.new(options).run(options)
     end
   end
+  
   namespace :server do
     desc 'create a server'
     task :create, :name, :key, :username, :flavor_id, :image_id do |task, options|
