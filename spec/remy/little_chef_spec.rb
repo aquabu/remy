@@ -18,6 +18,12 @@ describe Remy::LittleChef do
       subject.color.should == 'blue'
       subject.recipes.should == ['recipe[hello_world]']
     end
+
+    it 'should require the remote chef ip' do
+      expect do
+        Remy::LittleChef.new
+      end.should raise_error(ArgumentError)
+    end
   end
 
   describe '#run' do
