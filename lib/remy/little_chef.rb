@@ -7,6 +7,7 @@ module Remy
     def initialize(options)
       options = JSON.parse(options).symbolize_keys! if options.is_a?(String)
       @remote_chef_ip = options[:remote_chef_ip]
+      @chef_args = options.delete(:chef_args)
       @configuration = Remy.configuration.dup
       @configuration.deep_merge!(options)
     end
@@ -30,6 +31,11 @@ module Remy
       create_solo_rb
       create_bash_script_which_runs_chef
       create_node_json_from_remy_config
+    end
+
+    # Fix this later
+    def public_ip
+      remote_chef_ip
     end
 
     def rsync_temp_dir_with_cookbooks_to_remote_host
@@ -80,7 +86,10 @@ EOF
     def create_bash_script_which_runs_chef
       run_chef = <<-EOF
 #!/bin/bash
-chef-solo -j #{remote_chef_dir}/#{node_json} -c #{remote_chef_dir}/#{solo_rb}
+# Pass "-l debug" to this script to get more debug output
+
+# $@ gets the array of args from Bash
+chef-solo $@ #{@chef_args} -j #{remote_chef_dir}/#{node_json} -c #{remote_chef_dir}/#{solo_rb}
 EOF
       File.open(File.join(tmp_dir, run_chef_solo_bash_script), 'w+') do |f|
         f.write(run_chef)

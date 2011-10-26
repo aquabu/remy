@@ -45,7 +45,7 @@ describe Remy do
       end
 
       it "should return an empty array if no roles paths are specified" do
-        Remy.configure {} 
+        Remy.configure {}
         subject.configuration.roles_path.should == []
       end
     end

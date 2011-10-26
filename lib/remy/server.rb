@@ -50,6 +50,7 @@ Private IP:     #{server.private_ip_address}
 RAM:            #{server.flavor.ram} MB
 Image:          #{server.image.name}
 SERVER_INFO
+
   end
 
   def print *args
