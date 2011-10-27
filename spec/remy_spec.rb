@@ -121,14 +121,28 @@ describe Remy do
         Remy.find_servers(:rails_env => 'demo').keys.should == ['web.sharespost.com', 'demo.sharespost.com']
       end
 
+      it 'should return all servers if there are no criteria' do
+        Remy.find_servers.keys.should == ['db.sharespost.com', 'web.sharespost.com', 'demo.sharespost.com']
+      end
+
       it 'should return servers that match the criteria (with multiple criteria)' do
         Remy.find_servers(:rails_env => 'demo', :color => 'blue').keys.should == ['web.sharespost.com']
+      end
+
+      it "should return nil if there are no servers specified in the yaml file" do
+        Remy.configure {|config| config.yml_files = File.join(File.dirname(__FILE__), 'fixtures/hello_world_chef.yml') }
+        Remy.find_servers(:rails_env => 'demo').should be_nil
       end
     end
 
     describe '.find_server' do
       it 'should return the first server that matchs the criteria' do
         Remy.find_server(:rails_env => 'demo').keys.should == ['web.sharespost.com']
+      end
+
+      it 'should return nil if there are no servers specifie in the yml files' do
+        Remy.configure {|config| config.yml_files = File.join(File.dirname(__FILE__), 'fixtures/hello_world_chef.yml') }
+        Remy.find_server(:rails_env => 'demo').should be_nil
       end
     end
 
@@ -137,7 +151,12 @@ describe Remy do
         Remy.find_server_config(:rails_env => 'demo').to_hash.should == {"color"=>"blue", "recipes"=>["recipe[hello_world]"], "rails_env"=>"demo", "ip_address"=>"50.57.162.227"}
       end
 
-      it "should return nil if no server info is found" do
+      it 'should return nil if no server info is found' do
+        Remy.find_server_config(:rails_env => 'foo').should be_nil
+      end
+
+      it 'should return nil if there are no servers in the yml files' do
+        Remy.configure {|config| config.yml_files = File.join(File.dirname(__FILE__), 'fixtures/hello_world_chef.yml') }
         Remy.find_server_config(:rails_env => 'foo').should be_nil
       end
     end

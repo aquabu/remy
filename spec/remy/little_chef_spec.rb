@@ -12,7 +12,7 @@ describe Remy::LittleChef do
   describe "#configuration" do
     let(:little_chef) { Remy::LittleChef.new(:ip_address => '50.57.162.227') }
     subject { little_chef.instance_variable_get(:@node_configuration) }
-    it "should extract the info which pertains to this " do
+    it "should extract the info which pertains to this node" do
       subject.ip_address.should == '50.57.162.227'
       subject.rails_env.should == 'demo'
       subject.color.should == 'blue'
@@ -50,6 +50,12 @@ describe Remy::LittleChef do
       node_configuration(little_chef).another_node_attribute.should == new_attribute_value_for_this_node_only
       node_configuration(little_chef).yml_files.should == ['../fixtures/foo.yml', '../fixtures/bar.yml', '../fixtures/little_chef.yml'].map {|f| File.join(File.dirname(__FILE__), f) }
       Remy.configuration.another_node_attribute.should == original_global_remy_node_attribute_value  # Unchanged
+    end
+
+    it 'should work with the absolute minimal Chef yml file' do
+      Remy.configure {|config| config.yml_files = File.join(File.dirname(__FILE__), '../fixtures/hello_world_chef.yml') }
+      little_chef = Remy::LittleChef.new
+      little_chef.run
     end
   end
 end

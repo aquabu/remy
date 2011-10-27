@@ -1,0 +1,5 @@
+ip_address: 50.57.162.227
+color: blue
+recipes:
+  - recipe[hello_world]
+

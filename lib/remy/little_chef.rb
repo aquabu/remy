@@ -5,15 +5,17 @@ module Remy
     include FileUtils
     attr_reader :ip_address
 
-    def initialize(options)
+    def initialize(options = {})
       options = JSON.parse(options).symbolize_keys! if options.is_a?(String)
-      @ip_address = options[:ip_address]
       @chef_args = options.delete(:chef_args)
       @quiet = options.delete(:quiet)
 
-      @node_configuration = Remy.find_server_config(:ip_address => ip_address)
-      @node_configuration.deep_merge!(Remy.configuration)
+      @node_configuration = Remy.configuration.dup
+      @ip_address = options[:ip_address] ? options[:ip_address] : @node_configuration.ip_address
+      server_config = Remy.find_server_config(:ip_address => ip_address) || Mash.new
+      @node_configuration.deep_merge!(server_config)
       @node_configuration.deep_merge!(options)
+      @node_configuration
     end
 
     def run

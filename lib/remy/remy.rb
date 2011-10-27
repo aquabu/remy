@@ -37,6 +37,7 @@ module Remy
     end
 
     def find_servers(options = {})
+      return nil unless configuration.servers
       Mash.new(configuration.servers.inject({}) do |hash, (server_name, server_config)|
         found = options.all? { |(key, value)| server_config[key] == value }
         hash[server_name] = server_config if found
@@ -45,6 +46,7 @@ module Remy
     end
 
     def find_server(options = {})
+      return nil unless configuration.servers
       server_name, server_config = configuration.servers.detect do |(server_name, server_config)|
         options.all? { |(key, value)| server_config[key] == value }
       end
@@ -52,7 +54,7 @@ module Remy
     end
 
     def find_server_config(options = {})
-      find_server(options).values.try(:first)
+      find_server(options).try(:values).try(:first)
     end
   end
 end
