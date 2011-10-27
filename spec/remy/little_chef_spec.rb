@@ -23,7 +23,7 @@ describe Remy::LittleChef do
   describe '#run' do
     it 'should work with a hash' do
       #Remy.expects(:execute).with("ssh root@111.111.111.111 'chef_solo'")
-      little_chef = Remy::LittleChef.new(:chef_ip => '50.57.162.227') #, :run_list => ['recipe[hello_world::default]'])
+      little_chef = Remy::LittleChef.new(:chef_ip => '50.57.162.227') 
       little_chef.run
       little_chef.configuration.chef_ip.should == '50.57.162.227'
       little_chef.configuration.recipes.should == ['recipe[hello_world]']
@@ -31,7 +31,7 @@ describe Remy::LittleChef do
 
     it 'should work with JSON' do
       #Remy.expects(:execute).with("ssh root@111.111.111.111 'chef_solo'")
-      little_chef = Remy::LittleChef.new("{\"chef_ip\":\"50.57.162.227\",\"run_list\":[\"recipe[hello_world::default]\"]}")
+      little_chef = Remy::LittleChef.new("{\"chef_ip\":\"50.57.162.227\"}")
       little_chef.run
       little_chef.configuration.chef_ip.should == '50.57.162.227'
       little_chef.configuration.recipes.should == ['recipe[hello_world]']
