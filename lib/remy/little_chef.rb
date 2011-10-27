@@ -11,7 +11,7 @@ module Remy
       @quiet = options.delete(:quiet)
       @configuration = Mash.new(Remy.configuration.to_hash.deep_merge(options))
       server_name, server_config = @configuration.servers.detect {|(server_name, server_config)| server_config.remote_chef_ip == remote_chef_ip}
-      @configuration.merge!(server_config)
+      configuration.merge!(server_config)
     end
 
     def run
@@ -29,7 +29,7 @@ module Remy
     def create_temp_dir_which_contains_cookbooks_roles_and_scripts
       create_temp_dir
       copy_cookbook_dirs_to_tmp_dir
-      copy_specs_to_tmp_dir
+      copy_spec_dirs_to_tmp_dir
       copy_role_dirs_to_tmp_dir
       create_solo_rb
       create_bash_script_which_runs_chef
@@ -67,7 +67,7 @@ module Remy
       end
     end
 
-    def copy_specs_to_tmp_dir
+    def copy_spec_dirs_to_tmp_dir
       full_spec_path = Remy.configuration.spec_path.map{|p| File.expand_path(p) }
       full_spec_path.each do |spec_path|
         cp_r spec_path, tmp_dir
