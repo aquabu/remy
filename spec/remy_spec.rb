@@ -4,8 +4,8 @@ describe Remy do
   describe '.configuration' do
     describe "yml files" do
       it 'should combine multiple yaml files into a mash' do
-        Remy.configure { |config| config.yml_files = ['fixtures/foo.yml', 'fixtures/bar.yml'] }
-        subject.configuration.yml_files.should == ['fixtures/foo.yml', 'fixtures/bar.yml']
+        Remy.configure { |config| config.yml_files = ['fixtures/foo.yml', 'fixtures/bar.yml'].map {|f| File.join(File.dirname(__FILE__), f) } }
+        subject.configuration.yml_files.should == ['fixtures/foo.yml', 'fixtures/bar.yml'].map {|f| File.join(File.dirname(__FILE__), f) }
         subject.configuration.blah.should == 'bar'
         subject.configuration.baz.should == 'baz'
       end
@@ -92,20 +92,17 @@ describe Remy do
 
   describe '.to_json' do
     it 'should create the expected JSON' do
-      Remy.configure do |config|
-        config.remote_chef_dir = 'foo'
-        config.cookbook_path = 'bar'
-        config.roles_path = 'blech'
-        config.yml_files = ['fixtures/foo.yml', 'fixtures/bar.yml']
-      end
-      JSON.parse(subject.to_json).should == {"cookbook_path"=>["bar"], "roles_path"=>["blech"], "spec_path"=>[], "remote_chef_dir"=>"foo", "baz"=>"baz", "yml_files"=>["fixtures/foo.yml", "fixtures/bar.yml"], "blah"=>"bar"}
+      Remy.configure {}
+      lambda do
+        JSON.parse(subject.to_json)
+      end.should_not raise_error
     end
   end
 
   describe '.servers' do
     before do
       Remy.configure do |config|
-        config.yml_files = ['fixtures/little_chef.yml']
+        config.yml_files = ['fixtures/little_chef.yml'].map {|f| File.join(File.dirname(__FILE__), f) }
       end
     end
 
