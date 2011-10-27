@@ -3,16 +3,16 @@ module Remy
     # For chef-solo info, see: http://wiki.opscode.com/display/chef/Chef+Solo
     include ::Remy::Shell
     include FileUtils
-    attr_reader :configuration, :ip_address
+    attr_reader :ip_address
 
     def initialize(options)
       options = JSON.parse(options).symbolize_keys! if options.is_a?(String)
       @ip_address = options[:ip_address]
       @chef_args = options.delete(:chef_args)
       @quiet = options.delete(:quiet)
-      @configuration = Mash.new(Remy.configuration.to_hash.deep_merge(options))
-      server_name, server_config = @configuration.servers.detect {|(server_name, server_config)| server_config.ip_address == ip_address}
-      configuration.merge!(server_config)
+      @node_configuration = Mash.new(Remy.configuration.to_hash.deep_merge(options))
+      server_name, server_config = @node_configuration.servers.detect {|(server_name, server_config)| server_config.ip_address == ip_address}
+      @node_configuration.merge!(server_config)
     end
 
     def run
@@ -28,7 +28,7 @@ module Remy
       copy_spec_cookbook_and_role_dirs_to_tmp_dir
       create_solo_rb
       create_bash_script_which_runs_chef
-      create_node_json_from_configuration
+      create_node_json_from_node_configuration
     end
 
     def rsync_temp_dir_with_cookbooks_to_remote_host
@@ -36,7 +36,7 @@ module Remy
       olddir = pwd
       begin
         chdir(tmp_dir)
-        `rsync -av * #{user}@#{ip_address}:#{remote_chef_dir}`
+        execute "rsync -av * #{user}@#{ip_address}:#{remote_chef_dir}"
       ensure
         chdir(olddir)
       end
@@ -51,7 +51,7 @@ module Remy
     end
 
     def copy_spec_cookbook_and_role_dirs_to_tmp_dir
-      [Remy.configuration.roles_path, Remy.configuration.cookbook_path, Remy.configuration.spec_path].each do |path|
+      [@node_configuration.roles_path, @node_configuration.cookbook_path, @node_configuration.spec_path].each do |path|
         full_path = path.map{|p| File.expand_path(p) }
         full_path.each do |a_path|
           cp_r a_path, tmp_dir
@@ -85,9 +85,9 @@ EOF
       chmod(0755, File.join(tmp_dir, run_chef_solo_bash_script))
     end
 
-    def create_node_json_from_configuration
+    def create_node_json_from_node_configuration
       File.open(File.join(tmp_dir, node_json), 'w+') do |f|
-        f.write(configuration.to_json)
+        f.write(@node_configuration.to_json)
       end
     end
 
@@ -100,7 +100,7 @@ EOF
     end
 
     def remote_chef_dir
-      Remy.configuration.remote_chef_dir
+      @node_configuration.remote_chef_dir
     end
 
     def tmp_dir
