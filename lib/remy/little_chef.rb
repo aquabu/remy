@@ -28,12 +28,10 @@ module Remy
 
     def create_temp_dir_which_contains_cookbooks_roles_and_scripts
       create_temp_dir
-      copy_cookbook_dirs_to_tmp_dir
-      copy_spec_dirs_to_tmp_dir
-      copy_role_dirs_to_tmp_dir
+      copy_spec_cookbook_and_role_dirs_to_tmp_dir
       create_solo_rb
       create_bash_script_which_runs_chef
-      create_node_json_from_remy_config
+      create_node_json_from_configuration
     end
 
     # Fix this later
@@ -60,24 +58,12 @@ module Remy
       @tmpdir = Dir.mktmpdir
     end
 
-    def copy_cookbook_dirs_to_tmp_dir
-      full_cookbook_path = Remy.configuration.cookbook_path.map{|p| File.expand_path(p) }
-      full_cookbook_path.each do |cookbook_path|
-        cp_r cookbook_path, tmp_dir
-      end
-    end
-
-    def copy_spec_dirs_to_tmp_dir
-      full_spec_path = Remy.configuration.spec_path.map{|p| File.expand_path(p) }
-      full_spec_path.each do |spec_path|
-        cp_r spec_path, tmp_dir
-      end
-    end
-
-    def copy_role_dirs_to_tmp_dir
-      full_roles_path = Remy.configuration.roles_path.map{|p| File.expand_path(p) }
-      full_roles_path.each do |roles_path|
-        cp_r roles_path, tmp_dir
+    def copy_spec_cookbook_and_role_dirs_to_tmp_dir
+      [Remy.configuration.roles_path, Remy.configuration.cookbook_path, Remy.configuration.spec_path].each do |path|
+        full_path = path.map{|p| File.expand_path(p) }
+        full_path.each do |a_path|
+          cp_r a_path, tmp_dir
+        end
       end
     end
 
@@ -107,7 +93,7 @@ EOF
       chmod(0755, File.join(tmp_dir, run_chef_solo_bash_script))
     end
 
-    def create_node_json_from_remy_config
+    def create_node_json_from_configuration
       File.open(File.join(tmp_dir, node_json), 'w+') do |f|
         f.write(configuration.to_json)
       end
