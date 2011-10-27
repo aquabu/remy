@@ -24,7 +24,7 @@ namespace :remy do
     task :create_and_bootstrap_chef, :name, :key, :username, :flavor_id, :image_id do |task, options|
       begin
         result = Remy::Server.new({:raise_exception => true}.merge(options)).create
-        Rake::Task[:'remy:chef:bootstrap'].invoke(result)
+        Rake::Task[:'remy:chef:bootstrap'].invoke([:ip_address, :password], result)
       rescue Exception => e
       end
     end
