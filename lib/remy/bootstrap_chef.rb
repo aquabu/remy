@@ -28,7 +28,7 @@ module Remy
     def install_gems_to_bootstrap_chef
       remote_gem 'bundler'
       remote_gem 'chef'
-      remote_gem 'rspec'
+      remote_gem 'rspec' # Required because we do Test-Driven Chef (TDC)!
     end
 
     def install_rvm
