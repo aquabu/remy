@@ -67,7 +67,7 @@ role_path "#{remote_chef_dir}/roles"
 cache_options({ :path => "#{remote_chef_dir}/cache/checksums", :skip_expires => true })
 EOF
       File.open(File.join(tmp_dir, solo_rb), 'w+') do |f|
-        f.write(solo_rb_contents)
+        f << solo_rb_contents
       end
     end
 
@@ -80,14 +80,14 @@ EOF
 chef-solo $@ #{@chef_args} -j #{remote_chef_dir}/#{node_json} -c #{remote_chef_dir}/#{solo_rb}
 EOF
       File.open(File.join(tmp_dir, run_chef_solo_bash_script), 'w+') do |f|
-        f.write(run_chef)
+        f << run_chef
       end
       chmod(0755, File.join(tmp_dir, run_chef_solo_bash_script))
     end
 
     def create_node_json_from_node_configuration
       File.open(File.join(tmp_dir, node_json), 'w+') do |f|
-        f.write(@node_configuration.to_json)
+        f << JSON.pretty_generate(@node_configuration)
       end
     end
 
