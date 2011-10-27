@@ -2,11 +2,11 @@ module Remy
   class BootstrapChef
     include ::Remy::Shell
 
-    attr_reader :public_ip, :ruby_version, :password
+    attr_reader :ip_address, :ruby_version, :password
 
     def initialize(options = { })
       @ruby_version = options[:ruby_version] || '1.8.7'
-      @public_ip = options[:public_ip]
+      @ip_address = options[:ip_address]
       @password = options[:password]
       @quiet = options[:quiet] || false
     end
@@ -48,11 +48,11 @@ module Remy
 
     def copy_ssh_key_to_remote
       raise "ssh-copy-id is not installed locally! On the Mac, do 'brew install ssh-copy-id'" unless is_ssh_copy_id_installed_locally?
-      is_ssh_key_in_local_known_hosts_file = `grep "#{public_ip}" ~/.ssh/known_hosts`.length > 0
+      is_ssh_key_in_local_known_hosts_file = `grep "#{ip_address}" ~/.ssh/known_hosts`.length > 0
       if is_ssh_key_in_local_known_hosts_file
-        execute %Q{expect -c 'spawn ssh-copy-id #{user}@#{public_ip}; expect assword ; send "#{password}\\n" ; interact'}
+        execute %Q{expect -c 'spawn ssh-copy-id #{user}@#{ip_address}; expect assword ; send "#{password}\\n" ; interact'}
       else
-        execute %Q{expect -c 'spawn ssh-copy-id #{user}@#{public_ip}; expect continue; send "yes\\n"; expect assword ; send "#{password}\\n" ; interact'}
+        execute %Q{expect -c 'spawn ssh-copy-id #{user}@#{ip_address}; expect continue; send "yes\\n"; expect assword ; send "#{password}\\n" ; interact'}
       end
     end
 

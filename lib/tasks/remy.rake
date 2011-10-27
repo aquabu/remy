@@ -3,12 +3,12 @@ require 'remy'
 namespace :remy do
   namespace :chef do
     desc 'bootstrap chef'
-    task :bootstrap, :public_ip, :password do |task, options|
+    task :bootstrap, :ip_address, :password do |task, options|
       Remy::BootstrapChef.new(options).bootstrap
     end
 
     desc 'run chef solo'
-    task :run, :chef_ip do |task, options|
+    task :run, :ip_address do |task, options|
       Rake::Task[:environment].invoke
       Remy::LittleChef.new(options).run
     end

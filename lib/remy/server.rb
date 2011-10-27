@@ -31,7 +31,7 @@ class Remy::Server
       ready?
     end
     print server_info
-    {:public_ip => server.public_ip_address, :password => server.password}
+    {:ip_address => server.public_ip_address, :password => server.password}
   rescue Exception => e
     puts 'Failed!'
     p e

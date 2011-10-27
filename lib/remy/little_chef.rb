@@ -6,11 +6,11 @@ module Remy
 
     def initialize(options)
       options = JSON.parse(options).symbolize_keys! if options.is_a?(String)
-      @chef_ip = options[:chef_ip]
+      @ip_address = options[:ip_address]
       @chef_args = options.delete(:chef_args)
       @quiet = options.delete(:quiet)
       @configuration = Mash.new(Remy.configuration.to_hash.deep_merge(options))
-      server_name, server_config = @configuration.servers.detect {|(server_name, server_config)| server_config.chef_ip == chef_ip}
+      server_name, server_config = @configuration.servers.detect {|(server_name, server_config)| server_config.ip_address == ip_address}
       configuration.merge!(server_config)
     end
 
@@ -34,17 +34,12 @@ module Remy
       create_node_json_from_configuration
     end
 
-    # Fix this later
-    def public_ip
-      chef_ip
-    end
-
     def rsync_temp_dir_with_cookbooks_to_remote_host
       remote_execute "mkdir -p #{remote_chef_dir}"
       olddir = pwd
       begin
         chdir(tmp_dir)
-        `rsync -av * #{user}@#{chef_ip}:#{remote_chef_dir}`
+        `rsync -av * #{user}@#{ip_address}:#{remote_chef_dir}`
       ensure
         chdir(olddir)
       end
@@ -99,8 +94,8 @@ EOF
       end
     end
 
-    def chef_ip
-      @chef_ip
+    def ip_address
+      @ip_address
     end
 
     def node_json

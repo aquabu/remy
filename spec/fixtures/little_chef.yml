@@ -8,20 +8,20 @@ database_server: &DB
 servers:
   web.sharespost.com:
     <<: *APP
-    chef_ip: 50.57.162.227
+    ip_address: 50.57.162.227
     rails_env: demo
     color: blue
 
   db.sharespost.com:
     <<: *DB
-    chef_ip: 51.51.51.51
+    ip_address: 51.51.51.51
     rails_env: production
     color: yellow
 
   demo.sharespost.com:
     <<: *DB
     <<: *APP
-    chef_ip: 52.52.52.52
+    ip_address: 52.52.52.52
     rails_env: demo
     color: green
 

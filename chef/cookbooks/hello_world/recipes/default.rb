@@ -3,7 +3,7 @@ template "/tmp/foo.txt" do
   owner 'root'
   group 'staff'
   mode "644"
-  variables(:color => node['color'], :chef_ip => node['chef_ip'], :rails_env => node['rails_env'])
+  variables(:color => node['color'], :ip_address => node['ip_address'], :rails_env => node['rails_env'])
 end
 
 ruby_block "test" do

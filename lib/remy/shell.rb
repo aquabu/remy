@@ -11,8 +11,8 @@ module Remy
     end
 
     def remote_execute(cmd)
-      raise ArgumentError.new unless public_ip
-      execute "ssh -T #{user}@#{public_ip} '#{cmd.strip}'"
+      raise ArgumentError.new unless ip_address
+      execute "ssh -T #{user}@#{ip_address} '#{cmd.strip}'"
     end
 
     def user
