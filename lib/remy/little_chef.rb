@@ -3,6 +3,7 @@ module Remy
     # For chef-solo info, see: http://wiki.opscode.com/display/chef/Chef+Solo
     include ::Remy::Shell
     include FileUtils
+    attr_reader :configuration, :ip_address
 
     def initialize(options)
       options = JSON.parse(options).symbolize_keys! if options.is_a?(String)
@@ -18,10 +19,6 @@ module Remy
       create_temp_dir_which_contains_cookbooks_roles_and_scripts
       rsync_temp_dir_with_cookbooks_to_remote_host
       run_chef_solo_on_remote_host
-    end
-
-    def configuration
-      @configuration
     end
 
     private
@@ -92,10 +89,6 @@ EOF
       File.open(File.join(tmp_dir, node_json), 'w+') do |f|
         f.write(configuration.to_json)
       end
-    end
-
-    def ip_address
-      @ip_address
     end
 
     def node_json
