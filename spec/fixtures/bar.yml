@@ -1,4 +1,6 @@
 baz:
   baz
 
-
+another_node_attribute:
+  red
+  
