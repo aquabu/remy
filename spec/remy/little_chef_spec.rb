@@ -43,9 +43,10 @@ describe Remy::LittleChef do
 
     it 'should not modify the global Remy config, but rather only the config which is for this particular Chef node' do
       original_global_remy_node_attribute_value = Remy.configuration.another_node_attribute
-      original_global_remy_node_attribute_value.should == 'red'
-      new_attribute_value_for_this_node_only = 'blue'
-      little_chef = Remy::LittleChef.new(:ip_address => '50.57.162.227', :another_node_attribute => new_attribute_value_for_this_node_only)
+      original_global_remy_node_attribute_value.should == 'hot'
+      new_attribute_value_for_this_node_only = 'cold'
+      little_chef = Remy::LittleChef.new(:ip_address => '50.57.162.227', :another_node_attribute => new_attribute_value_for_this_node_only, :color => 'purple')
+      node_configuration(little_chef).color.should == 'purple'
       node_configuration(little_chef).another_node_attribute.should == new_attribute_value_for_this_node_only
       node_configuration(little_chef).yml_files.should == ['../fixtures/foo.yml', '../fixtures/bar.yml', '../fixtures/little_chef.yml'].map {|f| File.join(File.dirname(__FILE__), f) }
       Remy.configuration.another_node_attribute.should == original_global_remy_node_attribute_value  # Unchanged

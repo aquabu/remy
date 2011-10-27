@@ -1,4 +1,5 @@
 require 'active_support/core_ext/object/to_json'
+require 'active_support/core_ext/object/try'
 require 'active_support/core_ext/hash'
 require 'mash'
 require 'tmpdir'

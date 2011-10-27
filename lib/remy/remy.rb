@@ -43,5 +43,16 @@ module Remy
         hash
       end)
     end
+
+    def find_server(options = {})
+      server_name, server_config = configuration.servers.detect do |(server_name, server_config)|
+        options.all? { |(key, value)| server_config[key] == value }
+      end
+      {server_name => server_config.nil? ? nil : server_config.dup}
+    end
+
+    def find_server_config(options = {})
+      find_server(options).values.try(:first)
+    end
   end
 end

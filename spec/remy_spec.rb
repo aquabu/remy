@@ -99,29 +99,46 @@ describe Remy do
     end
   end
 
-  describe '.servers' do
+  context 'with a configuration' do
     before do
       Remy.configure do |config|
         config.yml_files = ['fixtures/little_chef.yml'].map {|f| File.join(File.dirname(__FILE__), f) }
       end
     end
 
-    it 'returns all servers' do
-      Remy.servers.size.should == 3
-      Remy.servers['db.sharespost.com'].color.should == 'yellow'
-    end
-
-    describe 'find' do
+    describe '.servers' do
+      it 'returns all servers' do
+        Remy.servers.size.should == 3
+        Remy.servers['db.sharespost.com'].color.should == 'yellow'
+      end
       it 'should return servers that match the criteria (using standard Enumerable methods)' do
         Remy.servers.select {|(k,v)| v.rails_env == 'demo' }.map(&:first).should == ['web.sharespost.com', 'demo.sharespost.com']
       end
+    end
 
+    describe '.find_servers' do
       it 'should return servers that match the criteria' do
         Remy.find_servers(:rails_env => 'demo').keys.should == ['web.sharespost.com', 'demo.sharespost.com']
       end
 
       it 'should return servers that match the criteria (with multiple criteria)' do
         Remy.find_servers(:rails_env => 'demo', :color => 'blue').keys.should == ['web.sharespost.com']
+      end
+    end
+
+    describe '.find_server' do
+      it 'should return the first server that matchs the criteria' do
+        Remy.find_server(:rails_env => 'demo').keys.should == ['web.sharespost.com']
+      end
+    end
+
+    describe '.find_server_config' do
+      it 'should return the first server that matchs the criteria' do
+        Remy.find_server_config(:rails_env => 'demo').to_hash.should == {"color"=>"blue", "recipes"=>["recipe[hello_world]"], "rails_env"=>"demo", "ip_address"=>"50.57.162.227"}
+      end
+
+      it "should return nil if no server info is found" do
+        Remy.find_server_config(:rails_env => 'foo').should be_nil
       end
     end
   end

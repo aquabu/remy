@@ -10,9 +10,10 @@ module Remy
       @ip_address = options[:ip_address]
       @chef_args = options.delete(:chef_args)
       @quiet = options.delete(:quiet)
-      @node_configuration = Mash.new(Remy.configuration.to_hash.deep_merge(options))
-      server_name, server_config = @node_configuration.servers.detect {|(server_name, server_config)| server_config.ip_address == ip_address}
-      @node_configuration.merge!(server_config)
+
+      @node_configuration = Remy.find_server_config(:ip_address => ip_address)
+      @node_configuration.deep_merge!(Remy.configuration)
+      @node_configuration.deep_merge!(options)
     end
 
     def run
