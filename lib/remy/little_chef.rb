@@ -14,8 +14,7 @@ module Remy
       @ip_address = options[:ip_address] ? options[:ip_address] : @node_configuration.ip_address
       server_config = Remy.find_server_config(:ip_address => ip_address) || Mash.new
       @node_configuration.deep_merge!(server_config)
-      @node_configuration.deep_merge!(options)
-      @node_configuration
+      @node_configuration.merge!(options)
     end
 
     def run
