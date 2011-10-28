@@ -41,11 +41,13 @@ class Remy::Server
   def server_info
     <<-SERVER_INFO
 
+
 Server name:    #{server.name}
 Admin password: #{server.password}
 Public IP:      #{server.public_ip_address}
 RAM:            #{server.flavor.ram} MB
 Image:          #{server.image.name}
+
 SERVER_INFO
 
   end
