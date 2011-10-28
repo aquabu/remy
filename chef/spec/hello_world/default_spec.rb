@@ -1,6 +1,6 @@
 require 'rspec'
 
 describe 'hello_world/default' do
-  it { File.exist?('/tmp/foo.txt').should be_true }
-  it { File.read('/tmp/foo.txt').should include('blue') }
+  it { File.exist?('/tmp/hello_world.txt').should be_true }
+  it { File.read('/tmp/hello_world.txt').should include('blue') }
 end

@@ -1,5 +1,5 @@
-template "/tmp/foo.txt" do
-  source "foo.txt.erb"
+template "/tmp/hello_world.txt" do
+  source "hello_world.txt.erb"
   owner 'root'
   group 'staff'
   mode "644"
