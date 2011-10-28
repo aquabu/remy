@@ -9,7 +9,6 @@ module Remy
       options = JSON.parse(options).symbolize_keys! if options.is_a?(String)
       @chef_args = options.delete(:chef_args)
       @quiet = options.delete(:quiet)
-
       @node_configuration = Remy.configuration.dup
       @ip_address = options[:ip_address] ? options[:ip_address] : @node_configuration.ip_address
       server_config = Remy.find_server_config(:ip_address => ip_address) || Mash.new
@@ -38,7 +37,7 @@ module Remy
       olddir = pwd
       begin
         chdir(tmp_dir)
-        execute "rsync -av * #{user}@#{ip_address}:#{remote_chef_dir}"
+        execute "rsync -av #{rsync_delete_flag} * #{user}@#{ip_address}:#{remote_chef_dir}"
       ensure
         chdir(olddir)
       end
@@ -50,6 +49,13 @@ module Remy
 
     def create_temp_dir
       @tmpdir = Dir.mktmpdir
+    end
+
+    def rsync_delete_flag
+      if remote_execute("test -e #{remote_chef_dir}")
+        chef_dir_contains_valid_chef_content = remote_execute("test -e #{remote_chef_dir}/#{node_json} && test -e #{remote_chef_dir}/cookbooks")
+        chef_dir_contains_valid_chef_content ? '--delete' : nil
+      end
     end
 
     def copy_spec_cookbook_and_role_dirs_to_tmp_dir
