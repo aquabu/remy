@@ -10,7 +10,7 @@ namespace :remy do
     desc 'run chef solo'
     task :run, :ip_address do |task, options|
       Rake::Task[:environment].invoke
-      Remy::LittleChef.new(options).run
+      Remy::Chef.new(options).run
     end
   end
 

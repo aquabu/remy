@@ -102,7 +102,7 @@ describe Remy do
   context 'with a configuration' do
     before do
       Remy.configure do |config|
-        config.yml_files = ['fixtures/little_chef.yml'].map {|f| File.join(File.dirname(__FILE__), f) }
+        config.yml_files = ['fixtures/chef.yml'].map {|f| File.join(File.dirname(__FILE__), f) }
       end
     end
 

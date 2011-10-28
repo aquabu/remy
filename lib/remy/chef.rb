@@ -1,5 +1,5 @@
 module Remy
-  class LittleChef
+  class Chef
     # For chef-solo info, see: http://wiki.opscode.com/display/chef/Chef+Solo
     include ::Remy::Shell
     include FileUtils
