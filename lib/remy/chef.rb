@@ -53,7 +53,7 @@ module Remy
 
     def rsync_delete_flag
       if remote_execute("test -e #{remote_chef_dir}")
-        chef_dir_contains_valid_chef_content = remote_execute("test -e #{remote_chef_dir}/#{node_json} && test -e #{remote_chef_dir}/cookbooks")
+        chef_dir_contains_valid_chef_content = remote_execute("test -e #{remote_chef_dir}/#{node_json} && test -e #{remote_chef_dir}/#{solo_rb}")
         chef_dir_contains_valid_chef_content ? '--delete' : nil
       end
     end
