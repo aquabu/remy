@@ -13,4 +13,4 @@ RSpec.configure do |config|
   config.mock_with :mocha
 end
 
-IP_ADDRESS = '50.57.163.233'
+IP_ADDRESS = '50.57.162.242'
