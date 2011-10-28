@@ -13,29 +13,4 @@ RSpec.configure do |config|
   config.mock_with :mocha
 end
 
-#
-#
-#chef.yml:
-#
-#common:
-#  cookbooks:
-#    - chef/cookbooks
-#
-#
-#
-#demo:
-#  data_files:
-#    - config/chef.yml
-#    - /Volumes/passwords/password.yml
-#    - ... files
-#  config_files:
-#    - chef/config/chef_config.yml
-#    - foobar.yml
-#    - etc.
-#
-#
-#
-#staging:
-#
-#production:
-
+IP_ADDRESS = '50.57.163.233'

@@ -1,4 +1,4 @@
-ip_address: 50.57.162.227
+ip_address: <%= IP_ADDRESS %>
 color: blue
 recipes:
   - recipe[hello_world]

@@ -10,10 +10,10 @@ describe Remy::LittleChef do
   end
 
   describe "#configuration" do
-    let(:little_chef) { Remy::LittleChef.new(:ip_address => '50.57.162.227') }
+    let(:little_chef) { Remy::LittleChef.new(:ip_address => IP_ADDRESS) }
     subject { little_chef.instance_variable_get(:@node_configuration) }
     it "should extract the info which pertains to this node" do
-      subject.ip_address.should == '50.57.162.227'
+      subject.ip_address.should == IP_ADDRESS
       subject.rails_env.should == 'demo'
       subject.color.should == 'blue'
       subject.recipes.should == ['recipe[hello_world]']
@@ -23,33 +23,37 @@ describe Remy::LittleChef do
   describe '#run' do
     def node_configuration(little_chef)
       little_chef.instance_variable_get(:@node_configuration)
+      # clear out /tmp/hello.txt and clear out /var/chef
     end
 
     it 'should work with a hash as its argument' do
       #Remy.expects(:execute).with("ssh root@111.111.111.111 'chef_solo'")
-      little_chef = Remy::LittleChef.new(:ip_address => '50.57.162.227')
+      little_chef = Remy::LittleChef.new(:ip_address => IP_ADDRESS)
       little_chef.run
-      node_configuration(little_chef).ip_address.should == '50.57.162.227'
+      node_configuration(little_chef).ip_address.should == IP_ADDRESS
       node_configuration(little_chef).recipes.should == ['recipe[hello_world]']
+      # do some checks
     end
 
     it 'should work with JSON as its argument' do
       #Remy.expects(:execute).with("ssh root@111.111.111.111 'chef_solo'")
-      little_chef = Remy::LittleChef.new("{\"ip_address\":\"50.57.162.227\"}")
+      little_chef = Remy::LittleChef.new("{\"ip_address\":\"#{IP_ADDRESS}\"}")
       little_chef.run
-      node_configuration(little_chef).ip_address.should == '50.57.162.227'
+      node_configuration(little_chef).ip_address.should == IP_ADDRESS
       node_configuration(little_chef).recipes.should == ['recipe[hello_world]']
+      # do some checks
     end
 
     it 'should not modify the global Remy config, but rather only the config which is for this particular Chef node' do
       original_global_remy_node_attribute_value = Remy.configuration.another_node_attribute
       original_global_remy_node_attribute_value.should == 'hot'
       new_attribute_value_for_this_node_only = 'cold'
-      little_chef = Remy::LittleChef.new(:ip_address => '50.57.162.227', :another_node_attribute => new_attribute_value_for_this_node_only, :color => 'purple')
+      little_chef = Remy::LittleChef.new(:ip_address => IP_ADDRESS, :another_node_attribute => new_attribute_value_for_this_node_only, :color => 'purple')
       node_configuration(little_chef).color.should == 'purple'
       node_configuration(little_chef).another_node_attribute.should == new_attribute_value_for_this_node_only
       node_configuration(little_chef).yml_files.should == ['../fixtures/foo.yml', '../fixtures/bar.yml', '../fixtures/little_chef.yml'].map {|f| File.join(File.dirname(__FILE__), f) }
       Remy.configuration.another_node_attribute.should == original_global_remy_node_attribute_value  # Unchanged
+      # do some checks
     end
 
     it 'should work with the absolute minimal Chef yml file' do

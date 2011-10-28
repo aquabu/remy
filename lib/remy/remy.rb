@@ -24,7 +24,7 @@ module Remy
                                  :cookbook_path => [@config_instance.cookbook_path].compact.flatten}.merge!(@config_instance.node_attributes))
 
       @config_instance.yml_files.each do |filename|
-        configuration.deep_merge!(YAML::load(IO.read(filename)) || {})
+        configuration.deep_merge!(YAML.load(ERB.new(File.read(filename)).result) || {})
       end
     end
 

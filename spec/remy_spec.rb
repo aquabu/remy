@@ -148,7 +148,7 @@ describe Remy do
 
     describe '.find_server_config' do
       it 'should return the first server that matchs the criteria' do
-        Remy.find_server_config(:rails_env => 'demo').to_hash.should == {"color"=>"blue", "recipes"=>["recipe[hello_world]"], "rails_env"=>"demo", "ip_address"=>"50.57.162.227"}
+        Remy.find_server_config(:rails_env => 'demo').to_hash.should == {"color"=>"blue", "recipes"=>["recipe[hello_world]"], "rails_env"=>"demo", "ip_address"=> IP_ADDRESS}
       end
 
       it 'should return nil if no server info is found' do

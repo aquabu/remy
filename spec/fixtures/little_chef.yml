@@ -8,7 +8,7 @@ database_server: &DB
 servers:
   web.sharespost.com:
     <<: *APP
-    ip_address: 50.57.162.227
+    ip_address: <%= IP_ADDRESS %>
     rails_env: demo
     color: blue
 

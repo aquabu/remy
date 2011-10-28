@@ -1,16 +1,14 @@
-require 'fog'
-
 class Remy::Server
-  attr_reader :name, :key, :username, :flavor_id, :image_id, :server
+  attr_reader :server_name, :cloud_api_key, :cloud_username, :flavor_id, :image_id, :server
   def initialize(options = {})
     options = {
       :flavor_id => 4, # 2GB
       :image_id => 49 # Ubuntu 10.04 LTS (lucid)
     }.merge(options || {})
 
-    @name = options[:name]
-    @key = options[:key]
-    @username = options[:username]
+    @server_name = options[:server_name]
+    @cloud_api_key = options[:cloud_api_key]
+    @cloud_username = options[:cloud_username]
     @flavor_id = options[:flavor_id]
     @image_id = options[:image_id]
     @quiet = options[:quiet] || false
@@ -21,10 +19,10 @@ class Remy::Server
   def create
     compute = Fog::Compute.new(
       :provider => 'Rackspace',
-      :rackspace_api_key => key,
-      :rackspace_username => username
+      :rackspace_api_key => cloud_api_key,
+      :rackspace_username => cloud_username
     )
-    @server = compute.servers.create(:flavor_id => flavor_id.to_i, :image_id => image_id.to_i, :name => name)
+    @server = compute.servers.create(:flavor_id => flavor_id.to_i, :image_id => image_id.to_i, :server_name => server_name)
     server.wait_for do
       print '.'
       STDOUT.flush
@@ -46,7 +44,6 @@ class Remy::Server
 Server name:    #{server.name}
 Admin password: #{server.password}
 Public IP:      #{server.public_ip_address}
-Private IP:     #{server.private_ip_address}
 RAM:            #{server.flavor.ram} MB
 Image:          #{server.image.name}
 SERVER_INFO
