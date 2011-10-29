@@ -95,7 +95,7 @@ EOF
 
     def create_node_json_from_node_configuration
       File.open(File.join(tmp_dir, node_json), 'w+') do |f|
-        f << JSON.pretty_generate(@node_configuration)
+        f << @node_configuration.to_json
       end
     end
 
