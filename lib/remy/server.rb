@@ -22,7 +22,7 @@ class Remy::Server
       :rackspace_api_key => cloud_api_key,
       :rackspace_username => cloud_username
     )
-    @server = compute.servers.create(:flavor_id => flavor_id.to_i, :image_id => image_id.to_i, :server_name => server_name)
+    @server = compute.servers.create(:flavor_id => flavor_id.to_i, :image_id => image_id.to_i, :name => server_name)
     server.wait_for do
       print '.'
       STDOUT.flush
