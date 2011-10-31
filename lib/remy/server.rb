@@ -1,24 +1,27 @@
 class Remy::Server
-  attr_reader :server_name, :cloud_api_key, :cloud_username, :flavor_id, :image_id, :server
+  attr_reader :server_name, :cloud_api_key, :cloud_username, :cloud_provider, :flavor_id, :image_id, :server
+  
   def initialize(options = {})
     options = {
       :flavor_id => 4, # 2GB
-      :image_id => 49 # Ubuntu 10.04 LTS (lucid)
+      :image_id => 49, # Ubuntu 10.04 LTS (lucid)
+      :quiet => false
     }.merge(options || {})
 
     @server_name = options[:server_name]
     @cloud_api_key = options[:cloud_api_key]
     @cloud_username = options[:cloud_username]
+    @cloud_provider = options[:cloud_provider]
     @flavor_id = options[:flavor_id]
     @image_id = options[:image_id]
-    @quiet = options[:quiet] || false
+    @quiet = options[:quiet]
     @raise_exception = options[:raise_exception]
     @server = nil
   end
 
   def create
     compute = Fog::Compute.new(
-      :provider => 'Rackspace',
+      :provider => cloud_provider,
       :rackspace_api_key => cloud_api_key,
       :rackspace_username => cloud_username
     )
