@@ -144,8 +144,8 @@ as an argument.
 
 Example: update your production database box:
 
-`server_config = Remy.find_server_config(:rails_env => :production, :role => :db)`
-`Remy::Chef.new(server_config).run`
+    server_config = Remy.find_server_config(:rails_env => :production, :role => :db)
+    Remy::Chef.new(server_config).run
 
 Other arguments can be passed into chef and will get applied against this node:
 
@@ -163,9 +163,9 @@ which will make chef-solo run in debug mode.
 
 From within your Capistrano file, you do a variety of things, such as the following:
 
-`Remy.servers.find_servers(:rails_env => :staging, :role => :app) do |server|`
-`    Remy::Chef.new(server).run`
-`end`
+    Remy.servers.find_servers(:rails_env => :staging, :role => :app) do |server|
+        Remy::Chef.new(server).run
+    end
 
 ## Chef location on the remote box
 
