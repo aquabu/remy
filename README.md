@@ -8,7 +8,7 @@ Remy provides the additional tools which are required to easily use chef-solo. R
 server box easily (whether from Rackspace or from some other cloud service provider), and then bootstrap it so that it
 can run chef-solo (the bootstrap will also run on physical, not cloud, boxes; all that's required is a valid IP address
 for Remy to use). Remy then provides an easy and convenient way to run chef-solo against these remote boxes, either
-programmatically or from the provided rake tasks. The ability to support a cluster of boxes plus multiple config files
+programmatically or from rake tasks that are provided. The ability to support a cluster of boxes plus multiple config files
 & directories (where some of these config files might contain passwords on encrypted drives) is what distinguishes Remy
 from [soloist](https://github.com/mkocher/soloist) and other chef-solo utilities; these multiple config files and
 directories are then "blended" together to create an overall chef configuration for a particular chef node.
@@ -27,7 +27,8 @@ See [the Remy simple Rails example](http://www.github.com/gregwoodward/remy_simp
 Remy installation with a "Hello world" recipe; you can be up and running with chef-solo in under 5 minutes.
 [The Remy cluster rails example](http://www.github.com/gregwoodward/remy_cluster_rails_example) shows a full Rails
 installation with a clustered environment for staging and production, and a single box which hosts the entire Rails app
-for the demo environment. These are the actual recipes we use for our clustered server environment at [SharesPost](http://www.sharespost.com/).
+for the demo environment; multiple config files are used because passwords are stored separately on an encrypted drive.
+These are the actual recipes we use for our clustered server environment at [SharesPost](http://www.sharespost.com/).
 
 
 ## Concepts
@@ -123,16 +124,49 @@ as an argument.
 
 Example: update your production database box:
 
-`db_config = Remy.find_server_config(:rails_env => :production, :role => :db)
-Remy::Chef.new(db_config).run`
+`server_config = Remy.find_server_config(:rails_env => :production, :role => :db)`
+`Remy::Chef.new(server_config).run`
+
+Other arguments can be passed into chef and will get applied against this node:
+
+`Remy::Chef.new(:ip_address => '123.123.123.123', :color => :blue, :height => :short).run`
+
+means that you can access node['color'] and node['height'] from within your Chef recipes, which will be :blue and :short,
+respectively. You can also give arguments which will be passed to chef-solo:
+
+`Remy::Chef.new(:ip_address => '123.123.123.123', :chef_arguments => '-l debug').run`
+
+which will make chef-solo run in debug mode.
+
 
 ### Run chef-solo on a collection of boxes:
 
 From within your Capistrano file, you do a variety of things, such as the following:
 
-    Remy.servers.find_servers(:rails_env => :staging, :role => :app) do |server|
-        Remy::Chef.new(server).run
-    end
+`Remy.servers.find_servers(:rails_env => :staging, :role => :app) do |server|`
+`    Remy::Chef.new(server).run`
+`end`
+
+## Chef location on the remote box
+
+The chef files are installed in /var/chef by default (this can be overridden to be another location in the
+[Remy configuration](https://github.com/gregwoodward/remy_cluster_rails_example/blob/master/config/initializers/remy.rb)).
+
+### Running chef-solo manually on the remote box
+
+You can always ssh into the remote box, cd into the chef directory (/var/chef by default; it could have been overridden in the
+Remy configuration), and run chef-solo by typing
+
+`/var/chef/run_chef_solo`
+
+as root. You can pass in debug arguments for chef-solo, e.g.:
+
+`/var/chef/run_chef_solo -l debug`
+
+If you ssh to the remote box, you can see the glob of JSON that was created by blending together all of the various
+Remy yml config files at /var/chef/node.json.
+
+
 
 ## Test-Driven Chef (TDC)
 
