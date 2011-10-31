@@ -44,7 +44,7 @@ along with the example yml files in [chef/config/chef.yml](http://www.github.com
 these cookbook directories should be in the [standard Opscode Chef cookbooks format](http://wiki.opscode.com/display/chef/Cookbooks) ).
 The location of the chef cookbooks directory is specified in the Remy configuration (see
 [remy.rb](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/config/initializers/remy.rb)); the default
-location is /var/chef on the remote boxes.
+location is /var/chef on the remote boxes, and is typically put in RAILS_ROOT/chef/cookbooks in your local Rails app.
 Within one of these YAML files, create an array of servers as specified by :servers (see
 [chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/config/chef.yml) ). The values in the yml config files
 which are loaded last take precedence over those which were loaded earlier, and options passed directly into Remy take
