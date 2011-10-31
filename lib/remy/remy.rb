@@ -56,5 +56,9 @@ module Remy
     def find_server_config(options = {})
       find_server(options).try(:values).try(:first)
     end
+
+    def cloud_configuration
+      {}
+    end
   end
 end

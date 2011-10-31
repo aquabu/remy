@@ -4,14 +4,14 @@ describe Remy do
   describe '.configuration' do
     describe "yml files" do
       it 'should combine multiple yaml files into a mash' do
-        Remy.configure { |config| config.yml_files = ['fixtures/foo.yml', 'fixtures/bar.yml'].map {|f| File.join(File.dirname(__FILE__), f) } }
-        subject.configuration.yml_files.should == ['fixtures/foo.yml', 'fixtures/bar.yml'].map {|f| File.join(File.dirname(__FILE__), f) }
+        Remy.configure { |config| config.yml_files = ['fixtures/foo.yml', 'fixtures/bar.yml'].map { |f| File.join(File.dirname(__FILE__), f) } }
+        subject.configuration.yml_files.should == ['fixtures/foo.yml', 'fixtures/bar.yml'].map { |f| File.join(File.dirname(__FILE__), f) }
         subject.configuration.blah.should == 'bar'
         subject.configuration.baz.should == 'baz'
       end
 
       it 'should return an empty array if there are no yml files' do
-        Remy.configure {  }
+        Remy.configure {}
         subject.configuration.yml_files.should == []
       end
     end
@@ -28,7 +28,7 @@ describe Remy do
       end
 
       it "should return an empty array if no cookbook paths are specified" do
-        Remy.configure { }
+        Remy.configure {}
         subject.configuration.cookbook_path.should == []
       end
     end
@@ -45,7 +45,7 @@ describe Remy do
       end
 
       it "should return an empty array if no spec paths are specified" do
-        Remy.configure { }
+        Remy.configure {}
         subject.configuration.spec_path.should == []
       end
     end
@@ -74,8 +74,8 @@ describe Remy do
       end
 
       it "should not blow up if there no node attributes are specified" do
-        lambda { Remy.configure {  } }.should_not raise_error
-       end
+        lambda { Remy.configure {} }.should_not raise_error
+      end
     end
 
     describe "#remote_chef_dir" do
@@ -102,7 +102,7 @@ describe Remy do
   context 'with a configuration' do
     before do
       Remy.configure do |config|
-        config.yml_files = ['fixtures/chef.yml'].map {|f| File.join(File.dirname(__FILE__), f) }
+        config.yml_files = ['fixtures/chef.yml'].map { |f| File.join(File.dirname(__FILE__), f) }
       end
     end
 
@@ -112,7 +112,7 @@ describe Remy do
         Remy.servers['db.sharespost.com'].color.should == 'yellow'
       end
       it 'should return servers that match the criteria (using standard Enumerable methods)' do
-        Remy.servers.select {|(k,v)| v.rails_env == 'demo' }.map(&:first).should == ['web.sharespost.com', 'demo.sharespost.com']
+        Remy.servers.select { |(k, v)| v.rails_env == 'demo' }.map(&:first).should == ['web.sharespost.com', 'demo.sharespost.com']
       end
     end
 
@@ -130,7 +130,7 @@ describe Remy do
       end
 
       it "should return nil if there are no servers specified in the yaml file" do
-        Remy.configure {|config| config.yml_files = File.join(File.dirname(__FILE__), 'fixtures/hello_world_chef.yml') }
+        Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), 'fixtures/hello_world_chef.yml') }
         Remy.find_servers(:rails_env => 'demo').should be_nil
       end
     end
@@ -141,7 +141,7 @@ describe Remy do
       end
 
       it 'should return nil if there are no servers specifie in the yml files' do
-        Remy.configure {|config| config.yml_files = File.join(File.dirname(__FILE__), 'fixtures/hello_world_chef.yml') }
+        Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), 'fixtures/hello_world_chef.yml') }
         Remy.find_server(:rails_env => 'demo').should be_nil
       end
     end
@@ -156,8 +156,19 @@ describe Remy do
       end
 
       it 'should return nil if there are no servers in the yml files' do
-        Remy.configure {|config| config.yml_files = File.join(File.dirname(__FILE__), 'fixtures/hello_world_chef.yml') }
+        Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), 'fixtures/hello_world_chef.yml') }
         Remy.find_server_config(:rails_env => 'foo').should be_nil
+      end
+    end
+
+    describe '.cloud_configuration' do
+      it 'should return nil if it has not been specified in the yml files' do
+        Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), 'fixtures/hello_world_chef.yml') }
+        Remy.cloud_configuration.should == {}
+      end
+
+      it 'should return the cloud configuration options if present in the yml files' do
+        Remy.cloud_configuration.should == {}
       end
     end
   end
