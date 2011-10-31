@@ -1,24 +1,26 @@
 # [Remy](http://www.github.com/gregwoodward/remy)
 
 Remy permits you to easily run chef-solo (one of the tools that is part of [Chef](http://www.opscode.com/chef/) from
-[Opscode](http://www.opscode.com/)), whether from within a standard Ruby application, or from within a Rails project.
-Remy is "a little Chef"; our contention is that you get 95-98% of the benefits of Chef without 95-98% of the hassles
-by not using chef-client & chef-server, but rather just using [chef-solo](http://wiki.opscode.com/display/chef/Chef+Solo);
-Remy provides the additional tools which are required to easily use chef-solo. Remy allows you to build a remote cloud
+[Opscode](http://www.opscode.com/)), whether from within a stand-alone Ruby application, or from within a Rails project.
+Remy is "a little chef"; our contention is that you get 95-98% of the benefits of Chef without 95-98% of the hassles
+by **NOT** using [chef-client](http://wiki.opscode.com/display/chef/Chef+Client) &
+[chef-server](http://wiki.opscode.com/display/chef/Chef+Server), but rather just using
+[chef-solo](http://wiki.opscode.com/display/chef/Chef+Solo); Remy provides the missing tools which are required to
+easily use chef-solo. Remy allows you to build a remote cloud
 server box easily (whether from Rackspace or from some other cloud service provider), and then bootstrap it so that it
-can run chef-solo (the bootstrap will also run on physical, not cloud, boxes; all that's required is a valid IP address
+can run chef-solo (the bootstrap will also run on physical, not cloud, boxes; all that's required is remote host at a valid IP address
 for Remy to use). Remy then provides an easy and convenient way to run chef-solo against these remote boxes, either
-programmatically or from rake tasks that are provided. The ability to support a cluster of boxes plus multiple config files
+programmatically or from some rake tasks that are provided. The ability to support a cluster of boxes plus multiple config files
 & directories (where some of these config files might contain passwords on encrypted drives) is what distinguishes Remy
 from [soloist](https://github.com/mkocher/soloist) and other chef-solo utilities; these multiple config files and
-directories are then "blended" together to create an overall chef configuration for a particular chef node.
+directories are then "blended" together to create an overall chef configuration (as JSON) for a particular chef node.
 
 We also do Test-Driven Chef (TDC) in our example recipes; rspec specs are run on the remote boxes to verify that the
-packages and configuration are installed properly.
+packages and configuration are installed properly; we use these specs to drive the creation of the Chef recipes.
 
-Note that the Chef bootstrap portion of Remy is currently limited to Ubuntu (it contains references 'apt-get'), but the
-chef-solo part of Remy can run on any type of Unix if the box has been properly bootstrapped for Chef; it would be relatively simple
-to extend Remy to support yum and CentOS/RedHat and other Unix OS's.
+Note that the Chef bootstrap portion of Remy is currently limited to Ubuntu (it contains references to 'apt-get'), but the
+chef-solo part of Remy can run on any type of Unix if the box has been properly bootstrapped for Chef. Also note that it
+would be relatively simple to extend Remy to support yum and CentOS/RedHat and other Unix OS's.
 
 
 ## Basic usage:
@@ -35,22 +37,33 @@ These are the actual recipes we use for our clustered server environment at [Sha
 
 Remy is configured as shown in [config/initializers/remy.rb](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/config/initializers/remy.rb),
 along with the yml files in [chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/config/chef.yml) and
-[SecureEncryptedDrive/chef/config/chef.yml](https://github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/SecureEncyptedDrive/chef/config/chef.yml)
+[SecureEncryptedDrive/chef/config/chef.yml](https://github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/SecureEncryptedDrive/chef/config/chef.yml)
 (this 'SecureEncryptedDrive' would normally not be a part of the Rails project, but rather an encrypted disk volume which is mounted such as
 /Volumes/SecureEncryptedDrive).  To use Remy, create a cookbooks directory which contains all of your recipes (see
 [chef/cookbooks](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/cookbooks) as an example;
-these cookbook directoriesshould be in the [standard Opscode Chef cookbooks format](http://wiki.opscode.com/display/chef/Cookbooks) ).
+these cookbook directories should be in the [standard Opscode Chef cookbooks format](http://wiki.opscode.com/display/chef/Cookbooks) ).
 The location of the Chefcookbooks directory is specified in the Remy configuration (see [remy.rb](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/config/initializers/remy.rb) ).
 Within one of these YAML files, create an array of servers as specified by :servers (see
 [chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/config/chef.yml) ). The values in the yml config files
 which are loaded last take precedence over those which were loaded earlier, and options passed directly into Remy take
-precedence over values in yml config files.
+precedence over values in the yml config files.
 
 Remy is typically used programmatically in a Capistrano deploy file or other Rails code
-(see [deploy.rb](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/deploy.rb) ), or by using the Remy rake tasks
+(see [deploy.rb](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/deploy.rb) ), or by using the supplied Remy rake tasks
 (see [remy.rake](http://www.github.com/gregwoodward/remy/blob/master/lib/tasks/remy.rake)).
 
-### :ip_address
+### Remy yml config files
+
+The Remy yml files can be pretty much whatever you want; see
+[this example for simple usage](https://github.com/gregwoodward/remy_simple_rails_example/blob/master/chef/config/chef.yml), and this one for
+[an advanced example to support a cluster](https://github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/config/chef.yml).
+
+These are keys which have special significance in the Remy config files; see :ip_address, :servers, and :cloud_configuration
+[here](https://github.com/gregwoodward/remy_simple_rails_example/blob/master/chef/config/chef.yml),
+[here](https://github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/config/chef.yml), and
+[here](https://github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/SecureEncryptedDrive/chef/config/chef.yml) for examples.
+
+#### :ip_address
 
 :ip_address is the IP address of the box which chef-solo will run against. Normally, this is given to Remy as part of the options
 arguments (either programmatically, or from a rake task), but it could also come in from one of the Remy yml config file(s).
@@ -62,18 +75,18 @@ where '123.123.123.123' is the IP address that chef-solo will run on. Note that:
 
 `Remy::Chef.new.run`
 
-would also work if :ip_address was specified somewhere in the Remy configuration (i.e., one of the Remy yml files); this is
+would also work if :ip_address was specified somewhere in the Remy configuration (i.e., it was specified in one of the Remy yml files); this is
 the case in the [chef.yml in the "hello world" Remy example](http://www.github.com/gregwoodward/remy_simple_rails_example/blob/master/chef/config/chef.yml)
 
 
-### :servers
+#### :servers
 
 If you are configuring a cluster of boxes, look at the [chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/config/chef.yml)
 file as an example. You'll see a :servers section; each server should specify its :ip_address. When Remy runs, Remy will
 find the section of the :servers in the yml file which has the same :ip_address as the currently specified value, and
 those values will get "promoted" to the top level, and applied against this chef node.  level.
 
-### :cloud_configuration
+#### :cloud_configuration
 
 You can specify the cloud server configuration in a :cloud_configuration section in one of the Remy config yml files;
 see [SecureEncryptedDrive/chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/SecureEncryptedDrive/chef/config/chef.yml) for an example.
