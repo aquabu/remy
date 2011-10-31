@@ -176,6 +176,11 @@ describe Remy do
                                                      :server_name => 'new-server.somedomain.com'})
 
       end
+
+      it 'should return nil if there is currently no Remy configuration' do
+        Remy.instance_variable_set('@configuration', nil)
+        Remy.cloud_configuration.should be_nil
+      end
     end
   end
 end
