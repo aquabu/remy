@@ -6,7 +6,7 @@ class Remy::Server
       :flavor_id => 4, # 2GB
       :image_id => 49, # Ubuntu 10.04 LTS (lucid)
       :quiet => false
-    }.merge(options || {})
+    }.merge(Remy.cloud_configuration || {}).merge(options || {})
 
     @server_name = options[:server_name]
     @cloud_api_key = options[:cloud_api_key]

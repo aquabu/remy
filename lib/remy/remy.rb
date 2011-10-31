@@ -58,7 +58,7 @@ module Remy
     end
 
     def cloud_configuration
-      {}
+      configuration.cloud_configuration
     end
   end
 end

@@ -164,11 +164,17 @@ describe Remy do
     describe '.cloud_configuration' do
       it 'should return nil if it has not been specified in the yml files' do
         Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), 'fixtures/hello_world_chef.yml') }
-        Remy.cloud_configuration.should == {}
+        Remy.cloud_configuration.should be_nil
       end
 
       it 'should return the cloud configuration options if present in the yml files' do
-        Remy.cloud_configuration.should == {}
+        Remy.cloud_configuration.should == Mash.new({:cloud_api_key => 'abcdefg12345',
+                                                     :cloud_provider => 'Rackspace',
+                                                     :cloud_username => 'sharespost',
+                                                     :flavor_id => 4,
+                                                     :image_id => 49,
+                                                     :server_name => 'new-server.somedomain.com'})
+
       end
     end
   end
