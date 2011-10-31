@@ -32,20 +32,20 @@ for the demo environment. These are the actual recipes we use for our clustered 
 
 ## Concepts
 
-Remy is configured as shown in [config/initializers/remy.rb](http://www.github.com/gregwoodward/remy_cluster_rails_example/config/initializers/remy.rb),
-along with the yml files in [chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/chef/config/chef.yml) and
-[SecureEncryptedDrive/chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/SecureEncryptedDrive/chef/config/chef.yml)
+Remy is configured as shown in [config/initializers/remy.rb](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/config/initializers/remy.rb),
+along with the yml files in [chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/config/chef.yml) and
+[SecureEncryptedDrive/chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/SecureEncryptedDrive/chef/config/chef.yml)
 (this 'SecureEncryptedDrive' would normally not be a part of the Rails project, but rather an encrypted disk volume which is mounted such as
 /Volumes/SecureEncryptedDrive).  To use Remy, create a cookbooks directory which contains all of your recipes (see
-[chef/cookbooks](http://www.github.com/gregwoodward/remy_cluster_rails_example/chef/cookbooks) as an example). The location of the Chef
-cookbooks directory is specified in the Remy configuration (see [remy.rb](http://www.github.com/gregwoodward/remy_cluster_rails_example/lib/initializers/remy.rb) ).
+[chef/cookbooks](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/cookbooks) as an example). The location of the Chef
+cookbooks directory is specified in the Remy configuration (see [remy.rb](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/lib/initializers/remy.rb) ).
 Within one of these YAML files, create an array of servers as specified by :servers (see
-[chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/chef/config/chef.yml) ). The values in the yml config files
+[chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/config/chef.yml) ). The values in the yml config files
 which are loaded last take precedence over those which were loaded earlier, and options passed directly into Remy take
 precedence over values in yml config files.
 
 Remy is typically used programmatically in a Capistrano deploy file or other Rails code
-(see [deploy.rb](http://www.github.com/gregwoodward/remy_cluster_rails_example/deploy.rb) ), or by using the Remy rake tasks
+(see [deploy.rb](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/deploy.rb) ), or by using the Remy rake tasks
 (see [remy.rake](http://www.github.com/gregwoodward/remy/lib/tasks/remy.rake) ).
 
 ### :ip_address
@@ -61,12 +61,12 @@ where '123.123.123.123' is the IP address that chef-solo will run on. Note that:
 `Remy::Chef.new.run`
 
 would also work if :ip_address was specified somewhere in the Remy configuration (i.e., one of the Remy yml files); this is
-the case in the [chef.yml in the "hello world" Remy example](http://www.github.com/gregwoodward/remy_simple_rails_example/chef/config/chef.yml)
+the case in the [chef.yml in the "hello world" Remy example](http://www.github.com/gregwoodward/remy_simple_rails_example/blob/master/chef/config/chef.yml)
 
 
 ### :servers
 
-If you are configuring a cluster of boxes, look at the [chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/chef/config/chef.yml)
+If you are configuring a cluster of boxes, look at the [chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/config/chef.yml)
 file as an example. You'll see a :servers section; each server should specify its :ip_address. When Remy runs, Remy will
 find the section of the :servers in the yml file which has the same :ip_address as the currently specified value, and
 those values will get "promoted" to the top level, and applied against this chef node.  level.
@@ -74,7 +74,7 @@ those values will get "promoted" to the top level, and applied against this chef
 ### :cloud_configuration
 
 You can specify the cloud server configuration in a :cloud_configuration section in one of the Remy config yml files;
-see [SecureEncryptedDrive/chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/SecureEncryptedDrive/chef/config/chef.yml) for an example.
+see [SecureEncryptedDrive/chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/SecureEncryptedDrive/chef/config/chef.yml) for an example.
 These cloud values can also be passed into the various Remy rake commands; see :server_name, :cloud_api_key, :cloud_username,
 etc., in the Rake commands in [remy.rake](http://www.github.com/gregwoodward/remy/lib/tasks/remy.rake).
 
@@ -135,6 +135,6 @@ From within your Capistrano file, you do a variety of things, such as the follow
 
 ## Test-Driven Chef (TDC)
 
-Look at the example recipes in [chef/spec](http://github.com/gregwoodward/remy_cluster_rails_example/chef/spec) to see how we do
+Look at the example recipes in [chef/spec](http://github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/spec) to see how we do
 Test-Driven Chef (TDC). When writing our recipes, we will first create a failing spec, and then write the Chef recipe to
 make the test pass.
