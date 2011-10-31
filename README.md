@@ -84,16 +84,18 @@ the case in the [chef.yml in the "hello world" Remy example](http://www.github.c
 If you are configuring a cluster of boxes, look at the [chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/config/chef.yml)
 file as an example. You'll see a :servers section; each server should specify its :ip_address. When Remy runs, Remy will
 find the section of the :servers in the yml file which has the same :ip_address as the currently specified value, and
-those values will get "promoted" to the top level, and applied against this chef node.  level.
+those values will get "promoted" to the top level, and applied against this chef node.  
 
 #### :cloud_configuration
 
 You can specify the cloud server configuration in a :cloud_configuration section in one of the Remy config yml files;
 see [SecureEncryptedDrive/chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/SecureEncryptedDrive/chef/config/chef.yml) for an example.
-These cloud values can also be passed into the various Remy rake commands; see :server_name, :cloud_api_key, :cloud_username,
+Alternatively, these cloud values can also be passed into the various Remy rake commands; see :server_name, :cloud_api_key, :cloud_username,
 etc., in the Rake commands in [remy.rake](http://www.github.com/gregwoodward/remy/blob/master/lib/tasks/remy.rake).
 
-## Create a new cloud server
+## Remy usage from Rake
+
+### Create a new cloud server
 
 Use the following rake command to create a new cloud server:
 
@@ -103,7 +105,7 @@ e.g.,
 
 `rake remy:server:create[foobar.sharespost.com,4,abcdefg1234,sharespost,Rakespace,49]`
 
-Note that if you have the :cloud_api_key, etc., specified in your Remy config, you can omit those arguments to the
+Note that if you have the :cloud_api_key, etc., specified in your Remy configuration yml files, you can omit those arguments to the
 rake command:
 
 `rake remy:server:create[foobar.sharespost.com,4]`
@@ -111,19 +113,24 @@ rake command:
 See the [here](http://obn.me/2011/04/rackspace-cloud-images-and-flavors-id/) for a list of Rackspace flavor IDs and image
 IDs (they might differ for other cloud providers).
 
-## Bootstrap your new cloud server to run Remy and chef-solo
+### Bootstrap your new cloud server to run Remy and chef-solo
 
 `rake remy:chef:bootstrap[:ip_address, :password]`
 
 
-## Build and bootstrap your cloud server
+### Build and bootstrap your cloud server
 
 You can both build a box and bootstrap it for chef-solo all in one step:
 
 `rake remy:server:create_and_bootstrap[:server_name, :flavor_id, :cloud_api_key, :cloud_username, :cloud_provider, :image_id]`
 
+### Run chef-solo
 
-## Programmatic usage of Remy from within Capistrano or other Ruby code
+`rake remy:chef:run[123.123.123.123]`
+
+will run chef-solo on the host at 123.123.123.123.
+
+## Remy usage from Ruby code (i.e., from within Capistrano or elsewhere)
 
 ### Run chef-solo on a single box:
 
