@@ -34,11 +34,12 @@ for the demo environment. These are the actual recipes we use for our clustered 
 
 Remy is configured as shown in [config/initializers/remy.rb](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/config/initializers/remy.rb),
 along with the yml files in [chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/config/chef.yml) and
-[SecureEncryptedDrive/chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/SecureEncryptedDrive/chef/config/chef.yml)
+[SecureEncryptedDrive/chef/config/chef.yml](https://github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/SecureEncyptedDrive/chef/config/chef.yml)
 (this 'SecureEncryptedDrive' would normally not be a part of the Rails project, but rather an encrypted disk volume which is mounted such as
 /Volumes/SecureEncryptedDrive).  To use Remy, create a cookbooks directory which contains all of your recipes (see
-[chef/cookbooks](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/cookbooks) as an example). The location of the Chef
-cookbooks directory is specified in the Remy configuration (see [remy.rb](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/lib/initializers/remy.rb) ).
+[chef/cookbooks](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/cookbooks) as an example;
+these cookbook directoriesshould be in the [standard Opscode Chef cookbooks format](http://wiki.opscode.com/display/chef/Cookbooks) ).
+The location of the Chefcookbooks directory is specified in the Remy configuration (see [remy.rb](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/config/initializers/remy.rb) ).
 Within one of these YAML files, create an array of servers as specified by :servers (see
 [chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/config/chef.yml) ). The values in the yml config files
 which are loaded last take precedence over those which were loaded earlier, and options passed directly into Remy take
@@ -46,7 +47,7 @@ precedence over values in yml config files.
 
 Remy is typically used programmatically in a Capistrano deploy file or other Rails code
 (see [deploy.rb](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/deploy.rb) ), or by using the Remy rake tasks
-(see [remy.rake](http://www.github.com/gregwoodward/remy/lib/tasks/remy.rake) ).
+(see [remy.rake](http://www.github.com/gregwoodward/remy/blob/master/lib/tasks/remy.rake)).
 
 ### :ip_address
 
@@ -76,7 +77,7 @@ those values will get "promoted" to the top level, and applied against this chef
 You can specify the cloud server configuration in a :cloud_configuration section in one of the Remy config yml files;
 see [SecureEncryptedDrive/chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/SecureEncryptedDrive/chef/config/chef.yml) for an example.
 These cloud values can also be passed into the various Remy rake commands; see :server_name, :cloud_api_key, :cloud_username,
-etc., in the Rake commands in [remy.rake](http://www.github.com/gregwoodward/remy/lib/tasks/remy.rake).
+etc., in the Rake commands in [remy.rake](http://www.github.com/gregwoodward/remy/blob/master/lib/tasks/remy.rake).
 
 ## Create a new cloud server
 
@@ -91,7 +92,7 @@ e.g.,
 Note that if you have the :cloud_api_key, etc., specified in your Remy config, you can omit those arguments to the
 rake command:
 
-`rake remy:server:create[foobar.sharespost.com,4]
+`rake remy:server:create[foobar.sharespost.com,4]`
 
 See the [here](http://obn.me/2011/04/rackspace-cloud-images-and-flavors-id/) for a list of Rackspace flavor IDs and image
 IDs (they might differ for other cloud providers).
@@ -103,12 +104,12 @@ IDs (they might differ for other cloud providers).
 
 ## Build and bootstrap your cloud server
 
-You can build a box and bootstrap it for chef-solo in one step:
+You can both build a box and bootstrap it for chef-solo all in one step:
 
 `rake remy:server:create_and_bootstrap[:server_name, :flavor_id, :cloud_api_key, :cloud_username, :cloud_provider, :image_id]`
 
 
-## Programmatic usage from within Capistrano or other Ruby code
+## Programmatic usage of Remy from within Capistrano or other Ruby code
 
 ### Run chef-solo on a single box:
 
