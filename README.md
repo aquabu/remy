@@ -34,7 +34,7 @@ for the demo environment. These are the actual recipes we use for our clustered 
 
 Remy is configured as shown in [config/initializers/remy.rb](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/config/initializers/remy.rb),
 along with the yml files in [chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/config/chef.yml) and
-[SecureEncryptedDrive/chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/SecureEncryptedDrive/chef/config/chef.yml)
+[SecureEncryptedDrive/chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/SecureEncryptedDrive/chef/config/chef.yml)
 (this 'SecureEncryptedDrive' would normally not be a part of the Rails project, but rather an encrypted disk volume which is mounted such as
 /Volumes/SecureEncryptedDrive).  To use Remy, create a cookbooks directory which contains all of your recipes (see
 [chef/cookbooks](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/cookbooks) as an example). The location of the Chef
@@ -74,7 +74,7 @@ those values will get "promoted" to the top level, and applied against this chef
 ### :cloud_configuration
 
 You can specify the cloud server configuration in a :cloud_configuration section in one of the Remy config yml files;
-see [SecureEncryptedDrive/chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/SecureEncryptedDrive/chef/config/chef.yml) for an example.
+see [SecureEncryptedDrive/chef/config/chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/SecureEncryptedDrive/chef/config/chef.yml) for an example.
 These cloud values can also be passed into the various Remy rake commands; see :server_name, :cloud_api_key, :cloud_username,
 etc., in the Rake commands in [remy.rake](http://www.github.com/gregwoodward/remy/lib/tasks/remy.rake).
 
