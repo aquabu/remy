@@ -118,6 +118,10 @@ IDs (they might differ for other cloud providers).
 
 ### Bootstrap your new cloud server to run Remy and chef-solo
 
+This bootstrap task installs the prerequisites necessary to run chef on this new remote box, such as updating the Linux
+distribution, installing RVM, installing the Chef gem and its prerequisites, and installing rspec (which is required
+because we do test-driven Chef):
+
 `rake remy:chef:bootstrap[:ip_address, :password]`
 
 
