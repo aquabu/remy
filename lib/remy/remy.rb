@@ -62,7 +62,7 @@ module Remy
     end
 
     def cloud_configuration
-      try(:configuration).try(:cloud_configuration)
+      configuration && configuration.cloud_configuration
     end
   end
 end
