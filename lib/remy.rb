@@ -1,5 +1,15 @@
-require 'active_support/core_ext/object/to_json'
-require 'active_support/core_ext/object/try'
+begin
+  require 'active_support/core_ext/object/to_json'
+rescue LoadError
+  require 'active_support/json/encoders/object'
+end
+
+begin
+  require 'active_support/core_ext/object/try'
+rescue LoadError
+  require 'active_support/core_ext/try'
+end
+
 require 'active_support/core_ext/hash'
 require 'fog'
 require 'erb'
