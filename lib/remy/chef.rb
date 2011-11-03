@@ -37,7 +37,7 @@ module Remy
       olddir = pwd
       begin
         chdir(tmp_dir)
-        execute "rsync -av #{rsync_delete_flag} * #{user}@#{ip_address}:#{remote_chef_dir}"
+        execute "rsync -a #{rsync_delete_flag} * #{user}@#{ip_address}:#{remote_chef_dir}"
       ensure
         chdir(olddir)
       end
