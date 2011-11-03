@@ -61,6 +61,10 @@ module Remy
       find_server(options).try(:values).try(:first)
     end
 
+    def find_server_config_by_name(name)
+      servers.find {|(server_name, _)| server_name == name}.try(:last)
+    end
+
     def cloud_configuration
       configuration && configuration.cloud_configuration
     end

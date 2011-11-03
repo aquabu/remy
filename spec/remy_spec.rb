@@ -167,6 +167,16 @@ describe Remy do
       end
     end
 
+    describe '.find_server_config_by_name' do
+      it 'should return the server that matches the name' do
+        Remy.find_server_config_by_name('db.sharespost.com').to_hash.should == {"encoding"=>"utf8", "adapter"=>"mysql2", "color"=>"yellow", "rails_env"=>"production", "ip_address"=>"51.51.51.51"}
+      end
+
+      it 'should return nil if theres no server that matches the name' do
+        Remy.find_server_config_by_name('db.asdfjkll.com').should be_nil
+      end
+    end
+
     describe '.cloud_configuration' do
       it 'should return nil if it has not been specified in the yml files' do
         Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), 'fixtures/hello_world_chef.yml') }
