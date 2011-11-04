@@ -12,8 +12,6 @@ module Remy
     include ::Remy::Shell
     include FileUtils
 
-    attr_reader :configuration
-
     def configure
       @config_instance = Configuration.new
       yield @config_instance
@@ -30,6 +28,10 @@ module Remy
           warn "WARN: #{filename} could not be found!"
         end
       end
+    end
+
+    def configuration
+      @configuration ? @configuration : Mash.new
     end
 
     def to_json
@@ -62,11 +64,41 @@ module Remy
     end
 
     def find_server_config_by_name(name)
-      servers.find {|(server_name, _)| server_name == name}.try(:last)
+      return nil unless configuration.servers
+      configuration.servers.find {|(server_name, _)| server_name == name}.try(:last)
     end
 
     def cloud_configuration
       configuration && configuration.cloud_configuration
+    end
+
+    def convert_rake_args_to_chef_options(rake_options)
+      options_hash = convert_properties_to_hash(rake_options)
+      chef_options = []
+      if options_hash
+        servers = find_servers(options_hash)
+        if !servers.empty?
+          chef_options = servers.collect {|server_name, chef_option| chef_option }
+        else
+          chef_options = [options_hash]
+        end
+      else
+        server_config = find_server_config_by_name(rake_options)
+        chef_options = server_config ? [server_config] : [{}]
+      end
+      chef_options
+    end
+
+    def convert_properties_to_hash(properties)
+      if properties =~ /:/
+        properties.split(' ').inject({}) do |result, pair|
+          key, value = pair.split(':')
+          result[key] = value
+          result
+        end.symbolize_keys
+      else
+        nil
+      end
     end
   end
 end

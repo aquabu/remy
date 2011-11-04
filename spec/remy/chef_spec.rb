@@ -48,5 +48,4 @@ describe Remy::Chef do
       Remy.configuration.another_node_attribute.should == original_global_remy_node_attribute_value # Unchanged                                                                                                    # do some checks
     end
   end
-
 end

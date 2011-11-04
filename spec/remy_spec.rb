@@ -2,6 +2,12 @@ require 'spec_helper'
 
 describe Remy do
   describe '.configuration' do
+    describe 'with no yml files' do
+      it 'should return an empty mash' do
+        Remy.configuration.should == Mash.new
+      end
+    end
+
     describe "yml files" do
       it 'should combine multiple yaml files into a mash' do
         Remy.configure { |config| config.yml_files = ['fixtures/foo.yml', 'fixtures/bar.yml'].map { |f| File.join(File.dirname(__FILE__), f) } }
@@ -175,6 +181,16 @@ describe Remy do
       it 'should return nil if theres no server that matches the name' do
         Remy.find_server_config_by_name('db.asdfjkll.com').should be_nil
       end
+
+      it 'should return nil (and not blow up) if there are no servers in the yml files' do
+        Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), 'fixtures/hello_world_chef.yml') }
+        Remy.find_server_config_by_name('db.asdfjkll.com').should be_nil
+      end
+
+      it 'should return nil (and not blow up) if there is no Remy configuration' do
+        Remy.instance_variable_set('@configuration', nil)
+        Remy.find_server_config_by_name('db.asdfjkll.com').should be_nil
+      end
     end
 
     describe '.cloud_configuration' do
@@ -196,6 +212,79 @@ describe Remy do
       it 'should return nil if there is currently no Remy configuration' do
         Remy.instance_variable_set('@configuration', nil)
         Remy.cloud_configuration.should be_nil
+      end
+    end
+  end
+
+  describe 'support for the rake tasks' do
+    before do
+      Remy.configure do |config|
+        config.yml_files = ['fixtures/foo.yml', 'fixtures/bar.yml', 'fixtures/chef.yml'].map { |f| File.join(File.dirname(__FILE__), f) }
+      end
+    end
+
+    describe '.convert_properties_to_hash' do
+      it 'should convert properties to a hash' do
+        Remy.send(:convert_properties_to_hash, ' foo:bar blah:blech').should == {:foo => 'bar', :blah => 'blech'}
+      end
+
+      it 'should convert a blank string to nil' do
+        Remy.send(:convert_properties_to_hash, '  ').should be_nil
+      end
+
+      it 'should return nil if the string is not in property format' do
+        Remy.send(:convert_properties_to_hash, 'demo.sharespost.com').should be_nil
+      end
+    end
+
+    describe '.convert_rake_args_to_chef_options' do
+      it 'should return an empty hash if no options are given' do
+        Remy.send(:convert_rake_args_to_chef_options, '').should == [{}]
+      end
+
+      it 'should return an ip address if an ip address is given as property value (this IP address is not in the yml file)' do
+        Remy.send(:convert_rake_args_to_chef_options, 'ip_address:1.2.3.4').should == [{:ip_address => '1.2.3.4'}]
+      end
+
+      it 'should return pass through additional properties' do
+        Remy.send(:convert_rake_args_to_chef_options, 'ip_address:1.2.3.4 color:green').should == [{:ip_address => '1.2.3.4', :color => 'green'}]
+      end
+
+      it 'should return additional properties from the yaml if the server is found in the :servers section of the yml files' do
+        Remy.send(:convert_rake_args_to_chef_options, 'ip_address:52.52.52.52').should == [
+            Mash.new({:ip_address => '52.52.52.52',
+                      :color => 'green',
+                      :recipes => ['recipe[hello_world]'],
+                      :adapter => 'mysql2',
+                      :rails_env => 'demo',
+                      :encoding => 'utf8'})]
+      end
+
+      it 'should be able to find servers by name' do
+        Remy.send(:convert_rake_args_to_chef_options, 'demo.sharespost.com').should == [
+            Mash.new({:ip_address => '52.52.52.52',
+                      :recipes => ['recipe[hello_world]'],
+                      :adapter => 'mysql2',
+                      :encoding => 'utf8',
+                      :rails_env => 'demo',
+                      :color => 'green'})
+        ]
+      end
+
+      it 'should be able to find servers from the yml files by searching by attributes' do
+        Remy.send(:convert_rake_args_to_chef_options, 'rails_env:demo').should == [
+            Mash.new({:ip_address => '50.57.162.242',
+                      :recipes => ['recipe[hello_world]'],
+                      :rails_env => 'demo',
+                      :color => 'blue'}),
+            Mash.new({:ip_address => '52.52.52.52',
+                      :recipes => ['recipe[hello_world]'],
+                      :adapter => 'mysql2',
+                      :rails_env => 'demo',
+                      :color => 'green',
+                      :encoding => 'utf8',
+                      :adapter => 'mysql2'})
+        ]
       end
     end
   end

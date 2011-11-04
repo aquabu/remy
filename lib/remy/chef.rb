@@ -22,6 +22,13 @@ module Remy
       run_chef_solo_on_remote_host
     end
 
+    def self.rake_run(rake_options)
+      chef_options_for_each_server = Remy.convert_rake_args_to_chef_options(rake_options)
+      chef_options_for_each_server.each do |chef_options|
+        Remy::Chef.new(chef_options).run
+      end
+    end
+
     private
 
     def create_temp_dir_which_contains_cookbooks_roles_and_scripts
@@ -60,9 +67,11 @@ module Remy
 
     def copy_spec_cookbook_and_role_dirs_to_tmp_dir
       [@node_configuration.roles_path, @node_configuration.cookbook_path, @node_configuration.spec_path].each do |path|
-        full_path = path.map{|p| File.expand_path(p) }
-        full_path.each do |a_path|
-          cp_r a_path, tmp_dir
+        if path
+          full_path = path.map{|p| File.expand_path(p) }
+          full_path.each do |a_path|
+            cp_r a_path, tmp_dir
+          end
         end
       end
     end

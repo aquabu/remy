@@ -3,29 +3,12 @@ require 'remy'
 namespace :remy do
   namespace :chef do
     desc 'run chef solo'
-    task :run, :ip_address do |task, options|
+    task :run, :rake_args do |task, options|
       begin
         Rake::Task[:environment].invoke
       rescue RuntimeError
       end
-
-      if options[:ip_address] =~ /:/
-        options = options[:ip_address].split(' ').inject({}) do |result, pair|
-          key, value = pair.split(':')
-          result[key] = value
-          result
-        end.symbolize_keys
-
-        Remy.find_servers(options).each do |(server_name, server_config)|
-          Remy::Chef.new(:ip_address => server_config.ip_address).run
-        end
-      else
-        if options[:ip_address] && (server_config = Remy.find_server_config_by_name(options[:ip_address]))
-          Remy::Chef.new({:ip_address => server_config.ip_address}).run
-        else
-          Remy::Chef.new(options).run
-        end
-      end
+      Remy::Chef.rake_run(options[:rake_args])
     end
   end
 
