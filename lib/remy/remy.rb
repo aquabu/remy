@@ -73,26 +73,26 @@ module Remy
     end
 
     def convert_rake_args_to_remy_options(rake_args)
-      chef_options = []
+      remy_options = []
       if options_hash = convert_properties_to_hash(rake_args)
         servers = find_servers(options_hash)
         if !servers.empty?
-          chef_options = servers.collect {|server_name, chef_option| chef_option }
+          remy_options = servers.collect {|server_name, chef_option| chef_option }
         else
-          chef_options = [options_hash]
+          remy_options = [options_hash]
         end
       else
         # From: http://www.regular-expressions.info/examples.html
         ip_address_regex = '\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b'
         if rake_args.match(ip_address_regex)
           server_config = find_server_config(:ip_address => rake_args)
-          chef_options = server_config ? [server_config] : [Mash.new({:ip_address => rake_args})]
+          remy_options = server_config ? [server_config] : [Mash.new({:ip_address => rake_args})]
         else
           server_config = find_server_config_by_name(rake_args)
-          chef_options = server_config ? [server_config] : [{}]
+          remy_options = server_config ? [server_config] : [{}]
         end
       end
-      chef_options
+      remy_options
     end
 
     # Converts "foo:bar baz:blech to {:foo => 'bar', :baz => 'blech'}"
