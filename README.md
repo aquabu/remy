@@ -113,7 +113,7 @@ rake command:
 
 `rake remy:server:create[foobar.sharespost.com,4]`
 
-See the [here](http://obn.me/2011/04/rackspace-cloud-images-and-flavors-id/) for a list of Rackspace flavor IDs and image
+[See here](http://obn.me/2011/04/rackspace-cloud-images-and-flavors-id/) for a list of Rackspace flavor IDs and image
 IDs (they might differ for other cloud providers).
 
 ### Bootstrap your new cloud server to run Remy and chef-solo
