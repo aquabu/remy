@@ -260,6 +260,20 @@ describe Remy do
                       :encoding => 'utf8'})]
       end
 
+      it 'should return additional properties from the yaml if the server is found in the :servers section of the yml files - IP address is specified' do
+        Remy.send(:convert_rake_args_to_chef_options, '52.52.52.52').should == [
+            Mash.new({:ip_address => '52.52.52.52',
+                      :color => 'green',
+                      :recipes => ['recipe[hello_world]'],
+                      :adapter => 'mysql2',
+                      :rails_env => 'demo',
+                      :encoding => 'utf8'})]
+      end
+
+      it 'should return the IP address - the IP address is specified, but is not found in the servers section in the yml files' do
+        Remy.send(:convert_rake_args_to_chef_options, '1.2.3.4').should == [Mash.new({:ip_address => '1.2.3.4'})]
+      end
+
       it 'should be able to find servers by name' do
         Remy.send(:convert_rake_args_to_chef_options, 'demo.sharespost.com').should == [
             Mash.new({:ip_address => '52.52.52.52',
