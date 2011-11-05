@@ -242,15 +242,15 @@ describe Remy do
         Remy.send(:convert_rake_args_to_chef_options, '').should == [{}]
       end
 
-      it 'should return an ip address if an ip address is given as property value (this IP address is not in the yml file)' do
+      it 'should return an ip address if an ip address is given as property value (this IP address is not in the :servers section of the yml files)' do
         Remy.send(:convert_rake_args_to_chef_options, 'ip_address:1.2.3.4').should == [{:ip_address => '1.2.3.4'}]
       end
 
-      it 'should return pass through additional properties' do
+      it 'should return pass through additional properties (the ip address is not in the servers section of the yml files)' do
         Remy.send(:convert_rake_args_to_chef_options, 'ip_address:1.2.3.4 color:green').should == [{:ip_address => '1.2.3.4', :color => 'green'}]
       end
 
-      it 'should return additional properties from the yaml if the server is found in the :servers section of the yml files' do
+      it "should return additional properties from the yml files if the server's ip address was found in the :servers section of the yml files" do
         Remy.send(:convert_rake_args_to_chef_options, 'ip_address:52.52.52.52').should == [
             Mash.new({:ip_address => '52.52.52.52',
                       :color => 'green',
