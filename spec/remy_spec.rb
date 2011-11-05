@@ -12,8 +12,8 @@ describe Remy do
       it 'should combine multiple yaml files into a mash' do
         Remy.configure { |config| config.yml_files = ['fixtures/foo.yml', 'fixtures/bar.yml'].map { |f| File.join(File.dirname(__FILE__), f) } }
         subject.configuration.yml_files.should == ['fixtures/foo.yml', 'fixtures/bar.yml'].map { |f| File.join(File.dirname(__FILE__), f) }
-        subject.configuration.blah.should == 'bar'
-        subject.configuration.baz.should == 'baz'
+        subject.configuration.blah.should == 'bar'  # From foo.yml
+        subject.configuration.baz.should == 'baz'   # From bar.yml
       end
 
       it 'should return an empty array if there are no yml files' do
@@ -237,21 +237,21 @@ describe Remy do
       end
     end
 
-    describe '.convert_rake_args_to_chef_options' do
+    describe '.convert_rake_args_to_remy_options' do
       it 'should return an empty hash if no options are given' do
-        Remy.send(:convert_rake_args_to_chef_options, '').should == [{}]
+        Remy.send(:convert_rake_args_to_remy_options, '').should == [{}]
       end
 
       it 'should return an ip address if an ip address is given as property value (this IP address is not in the :servers section of the yml files)' do
-        Remy.send(:convert_rake_args_to_chef_options, 'ip_address:1.2.3.4').should == [{:ip_address => '1.2.3.4'}]
+        Remy.send(:convert_rake_args_to_remy_options, 'ip_address:1.2.3.4').should == [{:ip_address => '1.2.3.4'}]
       end
 
       it 'should return pass through additional properties (the ip address is not in the servers section of the yml files)' do
-        Remy.send(:convert_rake_args_to_chef_options, 'ip_address:1.2.3.4 color:green').should == [{:ip_address => '1.2.3.4', :color => 'green'}]
+        Remy.send(:convert_rake_args_to_remy_options, 'ip_address:1.2.3.4 color:green').should == [{:ip_address => '1.2.3.4', :color => 'green'}]
       end
 
       it "should return additional properties from the yml files if the server's ip address was found in the :servers section of the yml files" do
-        Remy.send(:convert_rake_args_to_chef_options, 'ip_address:52.52.52.52').should == [
+        Remy.send(:convert_rake_args_to_remy_options, 'ip_address:52.52.52.52').should == [
             Mash.new({:ip_address => '52.52.52.52',
                       :color => 'green',
                       :recipes => ['recipe[hello_world]'],
@@ -261,7 +261,7 @@ describe Remy do
       end
 
       it 'should return additional properties from the yaml if the server is found in the :servers section of the yml files - IP address is specified' do
-        Remy.send(:convert_rake_args_to_chef_options, '52.52.52.52').should == [
+        Remy.send(:convert_rake_args_to_remy_options, '52.52.52.52').should == [
             Mash.new({:ip_address => '52.52.52.52',
                       :color => 'green',
                       :recipes => ['recipe[hello_world]'],
@@ -271,11 +271,11 @@ describe Remy do
       end
 
       it 'should return the IP address - the IP address is specified, but is not found in the servers section in the yml files' do
-        Remy.send(:convert_rake_args_to_chef_options, '1.2.3.4').should == [Mash.new({:ip_address => '1.2.3.4'})]
+        Remy.send(:convert_rake_args_to_remy_options, '1.2.3.4').should == [Mash.new({:ip_address => '1.2.3.4'})]
       end
 
       it 'should be able to find servers by name' do
-        Remy.send(:convert_rake_args_to_chef_options, 'demo.sharespost.com').should == [
+        Remy.send(:convert_rake_args_to_remy_options, 'demo.sharespost.com').should == [
             Mash.new({:ip_address => '52.52.52.52',
                       :recipes => ['recipe[hello_world]'],
                       :adapter => 'mysql2',
@@ -286,7 +286,7 @@ describe Remy do
       end
 
       it 'should be able to find servers from the yml files by searching by attributes' do
-        Remy.send(:convert_rake_args_to_chef_options, 'rails_env:demo').should == [
+        Remy.send(:convert_rake_args_to_remy_options, 'rails_env:demo').should == [
             Mash.new({:ip_address => '50.57.162.242',
                       :recipes => ['recipe[hello_world]'],
                       :rails_env => 'demo',

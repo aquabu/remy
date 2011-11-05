@@ -23,7 +23,7 @@ module Remy
     end
 
     def self.rake_run(rake_options)
-      chef_options_for_each_server = Remy.convert_rake_args_to_chef_options(rake_options)
+      chef_options_for_each_server = Remy.convert_rake_args_to_remy_options(rake_options)
       chef_options_for_each_server.each do |chef_options|
         Remy::Chef.new(chef_options).run
       end

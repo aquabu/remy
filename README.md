@@ -133,9 +133,24 @@ You can both build a box and bootstrap it for chef-solo all in one step:
 
 ### Run chef-solo
 
-`rake remy:chef:run[123.123.123.123]`
+`rake remy:chef:run['123.123.123.123']`
 
-will run chef-solo on the host at 123.123.123.123.
+will run chef-solo on the remote host at 123.123.123.123. You can also specify the rake arguments as properties:
+
+`rake remy:chef:run['ip_address:123.123.123.123']`
+
+Run Remy against a collection of remote nodes:
+
+`rake remy:chef:run['rails_env:staging role:app']`
+
+This will run Remy against all app servers for the staging environment; i.e., all servers in the :servers section of the Remy config files
+that match :rails_env = :staging and :role = :app will have Remy (i.e., chef-solo) run on them.  Run Remy against a
+specific named node:
+
+`rake remy:chef:run['demo.sharespost.com']`
+
+This assumes that 'demo.sharespost.com' is specified in the :servers section of a Remy yml config file.
+
 
 ## Remy usage from Ruby code (i.e., from within Capistrano or elsewhere)
 

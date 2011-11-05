@@ -72,7 +72,7 @@ module Remy
       configuration && configuration.cloud_configuration
     end
 
-    def convert_rake_args_to_chef_options(rake_args)
+    def convert_rake_args_to_remy_options(rake_args)
       chef_options = []
       if options_hash = convert_properties_to_hash(rake_args)
         servers = find_servers(options_hash)
@@ -95,6 +95,7 @@ module Remy
       chef_options
     end
 
+    # Converts "foo:bar baz:blech to {:foo => 'bar', :baz => 'blech'}"
     def convert_properties_to_hash(properties)
       if properties =~ /:/
         properties.split(' ').inject({}) do |result, pair|
