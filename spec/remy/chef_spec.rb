@@ -60,6 +60,14 @@ describe Remy::Chef do
       node_configuration(chef).quiet.should be_nil
       chef.instance_variable_get(:@quiet).should be_true
     end
+
+    it 'should not modify the global Remy configuration, but rather only the node configuration for this particular Chef node' do
+      Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), '../fixtures/bar.yml') }
+      Remy.configuration.another_node_attribute.should == 'hot'
+      chef = Remy::Chef.new(:another_node_attribute => 'cold')
+      node_configuration(chef).another_node_attribute.should == 'cold'
+      Remy.configuration.another_node_attribute.should == 'hot' # Unchanged from its original value                                                                                                  # do some checks
+    end
   end
 
   describe '#run' do
@@ -73,17 +81,6 @@ describe Remy::Chef do
       chef = Remy::Chef.new("{\"ip_address\":\"#{IP_ADDRESS}\"}")
       node_configuration(chef).ip_address.should == IP_ADDRESS
       node_configuration(chef).recipes.should == ['recipe[hello_world]']
-    end
-
-    it 'should not modify the global Remy config, but rather only the config which is for this particular Chef node' do
-      original_global_remy_node_attribute_value = Remy.configuration.another_node_attribute
-      original_global_remy_node_attribute_value.should == 'hot'
-      new_attribute_value_for_this_node_only = 'cold'
-      chef = Remy::Chef.new(:ip_address => IP_ADDRESS, :another_node_attribute => new_attribute_value_for_this_node_only, :color => 'purple')
-      node_configuration(chef).color.should == 'purple'
-      node_configuration(chef).another_node_attribute.should == new_attribute_value_for_this_node_only
-      node_configuration(chef).yml_files.should == ['../fixtures/foo.yml', '../fixtures/bar.yml', '../fixtures/chef.yml'].map { |f| File.join(File.dirname(__FILE__), f) }
-      Remy.configuration.another_node_attribute.should == original_global_remy_node_attribute_value # Unchanged                                                                                                    # do some checks
     end
   end
 end
