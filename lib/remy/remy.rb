@@ -72,27 +72,27 @@ module Remy
       configuration && configuration.cloud_configuration
     end
 
-    def convert_rake_args_to_remy_options(rake_args)
-      remy_options = []
+    def determine_ip_addresses_for_remy_run(rake_args)
+      ip_addresses = []
       if options_hash = convert_properties_to_hash(rake_args)
         servers = find_servers(options_hash)
         if !servers.empty?
-          remy_options = servers.collect {|server_name, chef_option| chef_option }
+          ip_addresses = servers.collect {|server_name, chef_option| chef_option.ip_address }
         else
-          remy_options = [options_hash]
+          ip_addresses = [options_hash[:ip_address]]
         end
       else
         # From: http://www.regular-expressions.info/examples.html
         ip_address_regex = '\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b'
         if rake_args.match(ip_address_regex)
-          server_config = find_server_config(:ip_address => rake_args)
-          remy_options = server_config ? [server_config] : [Mash.new({:ip_address => rake_args})]
+          ip_addresses = [rake_args]
+        elsif server_config = find_server_config_by_name(rake_args)
+          ip_addresses = server_config ? [server_config.ip_address] : []
         else
-          server_config = find_server_config_by_name(rake_args)
-          remy_options = server_config ? [server_config] : [{}]
+          ip_addresses = [configuration.ip_address].compact
         end
       end
-      remy_options
+      ip_addresses
     end
 
     # Converts "foo:bar baz:blech to {:foo => 'bar', :baz => 'blech'}"

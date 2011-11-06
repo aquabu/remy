@@ -5,6 +5,8 @@ database_server: &DB
   adapter: mysql2
   encoding: utf8
 
+rails_env: bogus_and_should_be_overridden_by_value_in_servers_section
+
 servers:
   web.sharespost.com:
     <<: *APP

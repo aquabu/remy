@@ -237,68 +237,54 @@ describe Remy do
       end
     end
 
-    describe '.convert_rake_args_to_remy_options' do
-      it 'should return an empty hash if no options are given' do
-        Remy.send(:convert_rake_args_to_remy_options, '').should == [{}]
+    describe '.determine_ip_addresses_for_remy_run' do
+      context 'top level ip address is present in the yml files' do
+        before do
+          Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), 'fixtures/hello_world_chef.yml') }
+        end
+        it 'should return the ip address in the yml file if no ip address is given and an ip is present in the yml files' do
+          Remy.send(:determine_ip_addresses_for_remy_run, '').should == ['50.57.162.242']
+        end
       end
 
-      it 'should return an ip address if an ip address is given as property value (this IP address is not in the :servers section of the yml files)' do
-        Remy.send(:convert_rake_args_to_remy_options, 'ip_address:1.2.3.4').should == [{:ip_address => '1.2.3.4'}]
+      context 'no top level ip address is present in the yml files' do
+        before do
+          Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), 'fixtures/foo.yml') }
+        end
+
+        it 'should return nothing if no ip address is given and no top-level ip address is in the yml files' do
+          Remy.send(:determine_ip_addresses_for_remy_run, '').should == []
+        end
+
+        it 'should return the ip address if an ip address is given and no top-level ip address is in the yml files' do
+          Remy.send(:determine_ip_addresses_for_remy_run, '1.2.3.4').should == ['1.2.3.4']
+        end
       end
 
-      it 'should return pass through additional properties (the ip address is not in the servers section of the yml files)' do
-        Remy.send(:convert_rake_args_to_remy_options, 'ip_address:1.2.3.4 color:green').should == [{:ip_address => '1.2.3.4', :color => 'green'}]
-      end
+      context ':servers section present in the yml files' do
+        before do
+          Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), 'fixtures/chef.yml') }
+        end
 
-      it "should return additional properties from the yml files if the server's ip address was found in the :servers section of the yml files" do
-        Remy.send(:convert_rake_args_to_remy_options, 'ip_address:52.52.52.52').should == [
-            Mash.new({:ip_address => '52.52.52.52',
-                      :color => 'green',
-                      :recipes => ['recipe[hello_world]'],
-                      :adapter => 'mysql2',
-                      :rails_env => 'demo',
-                      :encoding => 'utf8'})]
-      end
+        it 'should return an ip address if an ip address is given as property value (this IP address is not in the :servers section of the yml files)' do
+          Remy.send(:determine_ip_addresses_for_remy_run, 'ip_address:1.2.3.4').should == ['1.2.3.4']
+        end
 
-      it 'should return additional properties from the yaml if the server is found in the :servers section of the yml files - IP address is specified' do
-        Remy.send(:convert_rake_args_to_remy_options, '52.52.52.52').should == [
-            Mash.new({:ip_address => '52.52.52.52',
-                      :color => 'green',
-                      :recipes => ['recipe[hello_world]'],
-                      :adapter => 'mysql2',
-                      :rails_env => 'demo',
-                      :encoding => 'utf8'})]
-      end
+        it 'should return the ip address if the ip address was found in the :servers section of the yml files' do
+          Remy.send(:determine_ip_addresses_for_remy_run, 'ip_address:52.52.52.52').should == ['52.52.52.52']
+        end
 
-      it 'should return the IP address - the IP address is specified, but is not found in the servers section in the yml files' do
-        Remy.send(:convert_rake_args_to_remy_options, '1.2.3.4').should == [Mash.new({:ip_address => '1.2.3.4'})]
-      end
+        it 'should return the IP address - the IP address is specified, but is not found in the servers section in the yml files' do
+          Remy.send(:determine_ip_addresses_for_remy_run, '1.2.3.4').should == ['1.2.3.4']
+        end
 
-      it 'should be able to find servers by name' do
-        Remy.send(:convert_rake_args_to_remy_options, 'demo.sharespost.com').should == [
-            Mash.new({:ip_address => '52.52.52.52',
-                      :recipes => ['recipe[hello_world]'],
-                      :adapter => 'mysql2',
-                      :encoding => 'utf8',
-                      :rails_env => 'demo',
-                      :color => 'green'})
-        ]
-      end
+        it 'should be able to find servers by name from the :servers section of the yml file' do
+          Remy.send(:determine_ip_addresses_for_remy_run, 'demo.sharespost.com').should == ['52.52.52.52']
+        end
 
-      it 'should be able to find servers from the yml files by searching by attributes' do
-        Remy.send(:convert_rake_args_to_remy_options, 'rails_env:demo').should == [
-            Mash.new({:ip_address => '50.57.162.242',
-                      :recipes => ['recipe[hello_world]'],
-                      :rails_env => 'demo',
-                      :color => 'blue'}),
-            Mash.new({:ip_address => '52.52.52.52',
-                      :recipes => ['recipe[hello_world]'],
-                      :adapter => 'mysql2',
-                      :rails_env => 'demo',
-                      :color => 'green',
-                      :encoding => 'utf8',
-                      :adapter => 'mysql2'})
-        ]
+        it 'should be able to find all of the servers from the yml files that match certain attributes' do
+          Remy.send(:determine_ip_addresses_for_remy_run, 'rails_env:demo').should == ['50.57.162.242', '52.52.52.52']
+        end
       end
     end
   end

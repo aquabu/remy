@@ -23,9 +23,9 @@ module Remy
     end
 
     def self.rake_run(rake_options)
-      chef_options_for_each_server = Remy.convert_rake_args_to_remy_options(rake_options)
-      chef_options_for_each_server.each do |chef_options|
-        Remy::Chef.new(chef_options).run
+      ip_addresses = Remy.determine_ip_addresses_for_remy_run(rake_options)
+      ip_addresses.each do |ip_address|
+        Remy::Chef.new(:ip_address => ip_address).run
       end
     end
 
