@@ -1,5 +1,5 @@
 module Remy
-  class BootstrapChef
+  class Bootstrap
     include ::Remy::Shell
 
     attr_reader :ip_address, :ruby_version, :password
@@ -74,7 +74,7 @@ module Remy
     end
 
     def update_linux_distribution
-      remote_execute 'apt-get update && yes | apt-get upgrade'
+      remote_execute 'apt-get update && apt-get --yes upgrade'
     end
   end
 end

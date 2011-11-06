@@ -30,7 +30,7 @@ namespace :remy do
       rescue RuntimeError
       end
 
-      Remy::BootstrapChef.new(options).bootstrap
+      Remy::Bootstrap.new(options).bootstrap
     end
 
     desc 'create a server and bootstrap chef'
