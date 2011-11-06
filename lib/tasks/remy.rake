@@ -8,6 +8,7 @@ namespace :remy do
         Rake::Task[:environment].invoke
       rescue RuntimeError
       end
+      
       Remy::Chef.rake_run(options[:rake_args])
     end
   end
