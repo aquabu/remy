@@ -5,16 +5,8 @@ describe Remy::Chef do
     chef.instance_variable_get(:@node_configuration)
   end
 
-  before do
-    Remy.configure do |config|
-      config.yml_files = ['../fixtures/foo.yml', '../fixtures/bar.yml', '../fixtures/chef.yml'].map { |f| File.join(File.dirname(__FILE__), f) }
-      config.cookbook_path = ["../../chef/cookbooks"].map { |f| File.join(File.dirname(__FILE__), f) }
-      config.spec_path = ["../../chef/spec"].map { |f| File.join(File.dirname(__FILE__), f) }
-    end
-  end
-
-  describe "#configuration" do
-    it 'should use the top-level IP address in the yml files, if one is present in the yml files, and an ip address is not passed in as an argument' do
+  describe "#initialize and the node configuration" do
+    it 'should use the top-level IP address in the yml files, if one is present, and an ip address is not passed in as an argument' do
       Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), '../fixtures/hello_world_chef.yml') }
       chef = Remy::Chef.new
       node_configuration(chef).ip_address.should == IP_ADDRESS
@@ -22,7 +14,7 @@ describe Remy::Chef do
       node_configuration(chef).recipes.should == ['recipe[hello_world]']
     end
 
-    it 'should allow the top-level values in the yml files to be overridden' do
+    it 'should allow the top-level values in the yml files (including the ip address) to be overridden' do
       Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), '../fixtures/hello_world_chef.yml') }
       chef = Remy::Chef.new(:ip_address => '1.2.3.4', :color => 'green')
       node_configuration(chef).ip_address.should == '1.2.3.4'
@@ -44,17 +36,17 @@ describe Remy::Chef do
       Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), '../fixtures/chef.yml') }
       chef = Remy::Chef.new(:ip_address => '51.51.51.51', :color => 'purple', :temperature => 'warm')
       node_configuration(chef).color.should == 'purple'      # Overrides 'yellow' from the yml files
-      node_configuration(chef).temperature.should == 'warm'  # A new attribute not present in the yml files
+      node_configuration(chef).temperature.should == 'warm'  # A new node attribute which is not present in the yml files
     end
 
-    it 'should allow the chef args to be specified (and not merge this into the node configuration)' do
+    it 'should allow the chef args to be specified (and not merge this chef_args value into the node configuration)' do
       Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), '../fixtures/chef.yml') }
       chef = Remy::Chef.new(:chef_args => '-l debug')
       node_configuration(chef).chef_args.should be_nil
       chef.instance_variable_get(:@chef_args).should == '-l debug'
     end
 
-    it 'should allow the quiet option to be specified (and not merge this into the node configuration)' do
+    it 'should allow the quiet option to be specified (and not merge this option into the node configuration)' do
       Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), '../fixtures/chef.yml') }
       chef = Remy::Chef.new(:quiet => true)
       node_configuration(chef).quiet.should be_nil
@@ -71,6 +63,10 @@ describe Remy::Chef do
   end
 
   describe '#run' do
+    before do
+      Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), '../fixtures/chef.yml') }
+    end
+
     it 'should work with a hash as its argument' do
       chef = Remy::Chef.new(:ip_address => IP_ADDRESS)
       node_configuration(chef).ip_address.should == IP_ADDRESS
