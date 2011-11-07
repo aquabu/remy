@@ -11,7 +11,7 @@ module Remy
       @quiet = options[:quiet] || false
     end
 
-    def bootstrap
+    def run
       copy_ssh_key_to_remote
       update_linux_distribution
       install_rvm
