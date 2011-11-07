@@ -278,12 +278,26 @@ describe Remy do
           Remy.send(:determine_ip_addresses_for_remy_run, '1.2.3.4').should == ['1.2.3.4']
         end
 
+        it 'should return the IP address - the IP address is specified, and is found in the servers section in the yml files' do
+          Remy.send(:determine_ip_addresses_for_remy_run, '52.52.52.52').should == ['52.52.52.52']
+        end
+
         it 'should be able to find servers by name from the :servers section of the yml file' do
           Remy.send(:determine_ip_addresses_for_remy_run, 'demo.sharespost.com').should == ['52.52.52.52']
         end
 
+        it 'should be able to find servers by multiple names' do
+          Remy.send(:determine_ip_addresses_for_remy_run, ' demo.sharespost.com  db.sharespost.com ').should == ['52.52.52.52', '51.51.51.51']
+        end
+
+        it 'should be able to find servers by multiple names and ip addresses' do
+          Remy.send(:determine_ip_addresses_for_remy_run, ' demo.sharespost.com   51.51.51.51').should == ['52.52.52.52', '51.51.51.51']
+        end
+
         it 'should be able to find all of the servers from the yml files that match certain attributes' do
           Remy.send(:determine_ip_addresses_for_remy_run, 'rails_env:demo').should == ['50.57.162.242', '52.52.52.52']
+          Remy.send(:determine_ip_addresses_for_remy_run, 'rails_env:demo color:green').should == ['52.52.52.52']
+          Remy.send(:determine_ip_addresses_for_remy_run, 'rails_env:demo color:yellow').should == []
         end
       end
     end

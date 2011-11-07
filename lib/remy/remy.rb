@@ -82,17 +82,19 @@ module Remy
           ip_addresses = [options_hash[:ip_address]]
         end
       else
-        # From: http://www.regular-expressions.info/examples.html
-        ip_address_regex = '\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b'
-        if rake_args.match(ip_address_regex)
-          ip_addresses = [rake_args]
-        elsif server_config = find_server_config_by_name(rake_args)
-          ip_addresses = [server_config.ip_address]
-        else
-          ip_addresses = [configuration.ip_address].compact
+        names_or_ip_addresses = rake_args.split(' ').collect {|name| name.strip }
+        names_or_ip_addresses.each do |name_or_ip_address|
+          # From: http://www.regular-expressions.info/examples.html
+          ip_address_regex = '\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b'
+          if name_or_ip_address.match(ip_address_regex)
+            ip_addresses << name_or_ip_address
+          elsif server_config = find_server_config_by_name(name_or_ip_address)
+            ip_addresses << server_config.ip_address
+          end
         end
+        ip_addresses << configuration.ip_address
       end
-      ip_addresses
+      ip_addresses.compact
     end
 
     # Converts "foo:bar baz:blech" to {:foo => 'bar', :baz => 'blech'}
