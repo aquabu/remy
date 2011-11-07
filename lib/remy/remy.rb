@@ -87,7 +87,7 @@ module Remy
         if rake_args.match(ip_address_regex)
           ip_addresses = [rake_args]
         elsif server_config = find_server_config_by_name(rake_args)
-          ip_addresses = server_config ? [server_config.ip_address] : []
+          ip_addresses = [server_config.ip_address]
         else
           ip_addresses = [configuration.ip_address].compact
         end
@@ -95,7 +95,7 @@ module Remy
       ip_addresses
     end
 
-    # Converts "foo:bar baz:blech to {:foo => 'bar', :baz => 'blech'}"
+    # Converts "foo:bar baz:blech" to {:foo => 'bar', :baz => 'blech'}
     def convert_properties_to_hash(properties)
       if properties =~ /:/
         properties.split(' ').inject({}) do |result, pair|
