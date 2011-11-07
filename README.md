@@ -212,6 +212,12 @@ Remy yml config files at /var/chef/node.json.
 
 ## Test-Driven Chef (TDC)
 
-Look at the example recipes in [chef/spec](http://github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/spec) to see how we do
-Test-Driven Chef (TDC). When writing our recipes, we will first create a failing spec, and then write the Chef recipe to
-make the test pass.
+Look at the example specs in [chef/spec](http://github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/spec) to see how we do
+Test-Driven Chef (TDC). When writing our recipes, we first write a failing spec, and then write the Chef recipe to
+make this test pass; we then refactor the recipe as needed. Each time Remy (i.e., chef-solo) is run on a remote box, the
+specs for this recipe are also run. As an example of this, see the
+[bottom of this recipe](https://github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/cookbooks/server_bootstrap/recipes/create_user.rb)
+for where spot where the specs are invoked for the Chef recipe 'create_user'.  The
+[specs for this recipe are here](https://github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/spec/server_bootstrap/create_user_spec.rb)
+and consist of the various things that one would want to check for when this recipe executes. Note that these specs run on the remote box,
+not the local box.
