@@ -46,11 +46,12 @@ class Remy::Server
     <<-SERVER_INFO
 
 
-Server name:    #{server.name}
-Admin password: #{server.password}
-Public IP:      #{server.public_ip_address}
-RAM:            #{server.flavor.ram} MB
-Image:          #{server.image.name}
+Server name:        #{server.name}
+root password:      #{server.password}
+RAM:                #{server.flavor.ram} MB
+Image:              #{server.image.name}
+IP address:         #{server.public_ip_address}
+Private IP address: #{server.addresses['private'][0]}
 
 SERVER_INFO
 
