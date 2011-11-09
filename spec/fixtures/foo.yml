@@ -1,2 +1,5 @@
 blah:
   bar
+colors:
+  red: 'red'
+  green: 'green'

@@ -27,5 +27,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'activesupport', '>= 2'
   s.add_runtime_dependency 'chef'
   s.add_runtime_dependency 'fog'
-  s.add_runtime_dependency 'mash'
+  s.add_runtime_dependency 'hashie'
 end

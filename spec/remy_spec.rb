@@ -4,7 +4,7 @@ describe Remy do
   describe '.configuration' do
     describe 'with no yml files' do
       it 'should return an empty mash' do
-        Remy.configuration.should == Mash.new
+        Remy.configuration.should == Hashie::Mash.new
       end
     end
 
@@ -14,6 +14,7 @@ describe Remy do
         subject.configuration.yml_files.should == ['fixtures/foo.yml', 'fixtures/bar.yml'].map { |f| File.join(File.dirname(__FILE__), f) }
         subject.configuration.blah.should == 'bar'  # From foo.yml
         subject.configuration.baz.should == 'baz'   # From bar.yml
+        subject.configuration.colors.to_hash.symbolize_keys.should == {:blue => 'blue', :green => 'green', :red => 'red'}
       end
 
       it 'should return an empty array if there are no yml files' do
@@ -200,12 +201,13 @@ describe Remy do
       end
 
       it 'should return the cloud configuration options if present in the yml files' do
-        Remy.cloud_configuration.should == Mash.new({:cloud_api_key => 'abcdefg12345',
-                                                     :cloud_provider => 'Rackspace',
-                                                     :cloud_username => 'sharespost',
-                                                     :flavor_id => 4,
-                                                     :image_id => 49,
-                                                     :server_name => 'new-server.somedomain.com'})
+        Remy.cloud_configuration.should == Hashie::Mash.new(
+          :cloud_api_key => 'abcdefg12345',
+          :cloud_provider => 'Rackspace',
+          :cloud_username => 'sharespost',
+          :flavor_id => 4,
+          :image_id => 49,
+          :server_name => 'new-server.somedomain.com')
 
       end
 

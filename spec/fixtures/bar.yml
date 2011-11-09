@@ -1,5 +1,7 @@
 baz:
   baz
-
 another_node_attribute:
   hot
+colors:
+  blue: 'blue'
+  green: 'green'

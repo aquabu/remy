@@ -2,4 +2,7 @@ ip_address: <%= IP_ADDRESS %>
 color: blue
 recipes:
   - recipe[hello_world]
-
+other_data:
+  - red
+  - yellow
+  - blue

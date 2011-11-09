@@ -15,7 +15,7 @@ module Remy
     def configure
       @config_instance = Configuration.new
       yield @config_instance
-      @configuration = Mash.new({:yml_files => [@config_instance.yml_files].compact.flatten,
+      @configuration = Hashie::Mash.new({:yml_files => [@config_instance.yml_files].compact.flatten,
                                  :remote_chef_dir => (@config_instance.remote_chef_dir || '/var/chef'),
                                  :roles_path => [@config_instance.roles_path].compact.flatten,
                                  :spec_path => [@config_instance.spec_path].compact.flatten,
@@ -31,7 +31,7 @@ module Remy
     end
 
     def configuration
-      @configuration ? @configuration : Mash.new
+      @configuration ? @configuration : Hashie::Mash.new
     end
 
     def to_json
@@ -44,7 +44,7 @@ module Remy
 
     def find_servers(options = {})
       return nil unless configuration.servers
-      Mash.new(configuration.servers.inject({}) do |hash, (server_name, server_config)|
+      Hashie::Mash.new(configuration.servers.inject({}) do |hash, (server_name, server_config)|
         found = options.all? { |(key, value)| server_config[key] == value }
         hash[server_name] = server_config if found
         hash
