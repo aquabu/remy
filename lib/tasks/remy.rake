@@ -11,8 +11,9 @@ namespace :remy do
   desc 'ssh to a named box'
   task :ssh, :rake_args do |task, options|
     Rake::Task[:'remy:environment'].invoke
+    user = Remy.configuration.user || 'root'
     if ip_address = Remy.determine_ip_addresses_for_remy_run(options[:rake_args]).try(:first)
-      exec "ssh root@#{ip_address}"
+      exec "ssh #{user}@#{ip_address}"
     end
   end
 
