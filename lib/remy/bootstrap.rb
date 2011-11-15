@@ -2,12 +2,14 @@ module Remy
   class Bootstrap
     include ::Remy::Shell
 
-    attr_reader :ip_address, :ruby_version, :password
+    attr_reader :ip_address, :ruby_version, :password, :gems
 
     def initialize(options = { })
-      @ruby_version = options[:ruby_version] || '1.8.7'
       @ip_address = options[:ip_address]
       @password = options[:password]
+      options = (Remy.bootstrap || {}).merge(options).symbolize_keys
+      @ruby_version = options[:ruby_version] || '1.8.7'
+      @gems = options[:gems] || {}
       @quiet = options[:quiet] || false
     end
 
@@ -26,9 +28,9 @@ module Remy
     end
 
     def install_gems_to_bootstrap_chef
-      remote_gem 'bundler'
-      remote_gem 'chef'
-      remote_gem 'rspec' # Required because we do Test-Driven Chef (TDC)!
+      remote_gem 'bundler', :version => gems[:bundler]
+      remote_gem 'chef',    :version => gems[:chef]
+      remote_gem 'rspec',   :version => gems[:rspec] # Required because we do Test-Driven Chef (TDC)!
     end
 
     def install_rvm

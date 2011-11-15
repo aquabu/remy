@@ -216,6 +216,28 @@ describe Remy do
         Remy.cloud_configuration.should be_nil
       end
     end
+
+    describe '.bootstrap' do
+      it 'should return nil if it has not been specified in the yml files' do
+        Remy.configure { |config| config.yml_files = File.join(File.dirname(__FILE__), 'fixtures/hello_world_chef.yml') }
+        Remy.bootstrap.should be_nil
+      end
+
+      it 'should return the bootstrap options if present in the yml files' do
+        Remy.bootstrap.should == Hashie::Mash.new(
+          :ruby_version => '1.9.2',
+          :gems => {
+              :chef => '0.10.4',
+              :rspec => '2.7.0',
+              :bundler => '1.0.21'
+          })
+      end
+
+      it 'should return nil if there is currently no Remy configuration' do
+        Remy.instance_variable_set('@configuration', nil)
+        Remy.bootstrap.should be_nil
+      end
+    end
   end
 
   describe 'support for the rake tasks' do

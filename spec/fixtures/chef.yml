@@ -35,3 +35,10 @@ cloud_configuration:
   image_id: 49
   server_name: new-server.somedomain.com
 
+bootstrap:
+  ruby_version: 1.9.2
+  gems:
+    bundler: 1.0.21
+    chef: 0.10.4
+    rspec: 2.7.0
+

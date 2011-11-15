@@ -72,6 +72,10 @@ module Remy
       configuration && configuration.cloud_configuration
     end
 
+    def bootstrap
+      configuration && configuration.bootstrap
+    end
+
     def determine_ip_addresses_for_remy_run(rake_args)
       ip_addresses = []
       if options_hash = convert_properties_to_hash(rake_args)
