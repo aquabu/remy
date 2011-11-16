@@ -96,6 +96,14 @@ see [SecureEncryptedDrive/chef/config/chef.yml](http://www.github.com/gregwoodwa
 Alternatively, these cloud values can also be passed into the various Remy rake commands; see :server_name, :cloud_api_key, :cloud_username,
 etc., in the Rake commands in [remy.rake](http://www.github.com/gregwoodward/remy/blob/master/lib/tasks/remy.rake).
 
+#### :bootstrap
+
+You can specify the Ruby version that gets installed on a new remote box, along with the versions of the various bootstrap
+Ruby gems (chef, bundler, and rspec) in the yml config files; see
+[chef.yml](http://www.github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/config/chef.yml) for an example
+of these parameters.
+
+
 ## Remy usage from Rake
 
 ### Create a new cloud server
