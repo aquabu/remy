@@ -229,3 +229,7 @@ for where spot where the specs are invoked for the Chef recipe 'create_user'.  T
 [specs for this recipe are here](https://github.com/gregwoodward/remy_cluster_rails_example/blob/master/chef/spec/server_bootstrap/create_user_spec.rb)
 and consist of the various things that one would want to check for when this recipe executes. Note that these specs run on the remote box,
 not the local box.
+
+## License
+
+Remy is released under the MIT license.
